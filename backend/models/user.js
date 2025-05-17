@@ -12,7 +12,6 @@ const userSchema = new mongoose.Schema({
     },
      name :{
         type:String ,
-        trim :true,
         required :true,
         max:32,
     },
@@ -37,7 +36,7 @@ const userSchema = new mongoose.Schema({
     },
     role:{
         type:Number,
-        trim:true
+        
     },
     photo:{
         data:Buffer,
