@@ -1,7 +1,7 @@
 const User = require("../models/user");
 const shortId = require("shortid");
 const jwt = require("jsonwebtoken");
-const expressJwt = require("express-jwt");
+const { expressjwt: jwtexp } = require("express-jwt");
 
 exports.signup = async (req, res) => {
   try {
@@ -84,3 +84,41 @@ exports.signin = async (req, res) => {
     return res.status(500).json({ error: "Something went wrong." });
   }
 };
+//signout
+exports.signout = (req , res) =>{
+  res.clearCookie("token")
+  res.json({
+    message:"Signout success"
+  });
+};
+//middle for proctected route(requireSignin)
+// On protected routes, you verify this token to make sure:
+
+// The request comes from a valid logged-in user
+
+// You can trust the request and know who made it
+//4) express-jwt  middleware:
+
+// Reads the token from the request (usually from the Authorization header).
+
+// Verifies the token using the secret (JWT_SECRET).
+
+// If valid, adds the decoded user info (like user._id) to req.user or a custom field (like req.auth).
+
+// If invalid or missing, it returns an "Unauthorized" (401) error.
+
+
+//Require signin middleware for protected routes
+// This middleware checks if the user is authenticated before allowing access to certain routes.
+//Itcheck incoming token secret , and compare the secret we have 
+// in .env file , if that matchges then we can proceed
+exports.requireSignin = jwtexp({
+  secret: process.env.JWT_SECRET,
+  algorithms: ["HS256"],
+  getToken: (req) => {
+    if (req.cookies && req.cookies.token) {
+      return req.cookies.token;
+    }
+    return null;
+  },
+});

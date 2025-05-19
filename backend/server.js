@@ -1,3 +1,4 @@
+require("dotenv").config();
 const express = require("express");
 const morgan  = require("morgan");
 const bodyParser = require("body-parser");
@@ -10,7 +11,6 @@ const authRoutes = require('./routes/auth')
 //app
 const app = express();
 //db
-require('dotenv').config(); // <--- MUST be before any use of process.env
 
 mongoose.connect(process.env.DATABASE_CLOUD ).then(()=>console.log('DB Connected'))
 
