@@ -1,11 +1,10 @@
-import { useState } from "react";
-import { signin } from "../../actions/auth";
-
+import { useState , useEffect, use } from "react";
+import { signin ,authenticate , isAuth} from "../../actions/auth";
+import Router from "next/router";
 const SigninComponent = () => {
-  const [values, setValues] = useState({
-    
-    email: "",
-    password: "",
+  const [values, setValues] = useState({  
+    email: "miss@gmail.com",
+    password: "missuuu",
     error: "",
     loading: false,
     message: "",
@@ -13,27 +12,25 @@ const SigninComponent = () => {
   });
 
   const { email, password, error, loading, message, showForm } = values;
-
+//   useEffect(()=>{
+//     isAuth() && Router.push('/')
+//   },[])
   const handleSubmit = async (e) => {
     e.preventDefault();
     setValues({ ...values, error: "", loading: true });
     try {
-      const data = await signin({ name, email, password });
-      console.log(data);
-      setValues({
-        ...values,
-        name: "",
-        email: "",
-        password: "",
-        loading: false,
-        error: "",
-        message: data.message || "Signin successfull",
-        showForm: false,
-      });
+      const data = await signin({  email, password });
+      //save user token to cookie
+      //save user info to localstorge
+      //authenticate user
+      authenticate(data, ()=>
+        Router.push('/')
+    )
     } catch (err) {
+        console.log(err)
       setValues({
         ...values,
-        error: err.response.data.error,
+        error: err.response?.data?.error,
         loading: false,
         showForm: true,
       });
@@ -76,19 +73,8 @@ align-items-center "  style={{ minHeight: "600px" }}
         style={{ maxWidth: "350px", minHeight: "400px", padding: "20px" }}
       > 
       <h4 className="text-white text-center"> SIGN IN</h4>
-        <form onSubmit={handleSubmit}>
-          <div className="form-group mb-3">
-           
-            <input
-              value={name}
-              onChange={handleChange("name")}
-              type="text"
-              className="form-control   border-0"
-              
-              placeholder="Type your name"
-              required
-            />
-          </div>
+        <form onSubmit={handleSubmit}>p
+         
           <div className="form-group mb-3">
             <input
               value={email}
