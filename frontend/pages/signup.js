@@ -3,7 +3,8 @@ import Layout from "../components/Layout";
 import Link from "next/link";
 const Signup = ({ children }) => {
   return (
-    <Layout>
+    <Layout >
+          
      <SignupComponent/>
     </Layout>
   );

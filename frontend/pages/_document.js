@@ -20,7 +20,7 @@ export default function Document() {
           crossorigin="anonymous"
         />
       </Head>
-      <body>
+      <body class="vh-100">
         <Main />
         <NextScript />
       </body>

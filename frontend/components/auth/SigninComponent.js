@@ -1,9 +1,9 @@
 import { useState } from "react";
-import { signup } from "../../actions/auth";
+import { signin } from "../../actions/auth";
 
-const SignupComponent = () => {
+const SigninComponent = () => {
   const [values, setValues] = useState({
-    name: "",
+    
     email: "",
     password: "",
     error: "",
@@ -12,13 +12,13 @@ const SignupComponent = () => {
     showForm: true,
   });
 
-  const { name, email, password, error, loading, message, showForm } = values;
+  const { email, password, error, loading, message, showForm } = values;
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setValues({ ...values, error: "", loading: true });
     try {
-      const data = await signup({ name, email, password });
+      const data = await signin({ name, email, password });
       console.log(data);
       setValues({
         ...values,
@@ -27,7 +27,7 @@ const SignupComponent = () => {
         password: "",
         loading: false,
         error: "",
-        message: data.message || "Signup successfull",
+        message: data.message || "Signin successfull",
         showForm: false,
       });
     } catch (err) {
@@ -65,7 +65,7 @@ const SignupComponent = () => {
       </div>
     );
 
-  const signupForm = () => (
+  const signinForm = () => (
     <div
       className=" d-flex justify-content-center  flex-column 
 align-items-center "  style={{ minHeight: "600px" }}
@@ -75,7 +75,7 @@ align-items-center "  style={{ minHeight: "600px" }}
         align-items-between flex-column justify-content-center gap-5"
         style={{ maxWidth: "350px", minHeight: "400px", padding: "20px" }}
       > 
-      <h4 className="text-white text-center"> SIGN UP</h4>
+      <h4 className="text-white text-center"> SIGN IN</h4>
         <form onSubmit={handleSubmit}>
           <div className="form-group mb-3">
            
@@ -111,7 +111,7 @@ align-items-center "  style={{ minHeight: "600px" }}
             />
           </div>
           <div>
-            <button className="btn btn-light w-50" disabled={loading}>
+            <button className="btn btn-light w-50 " disabled={loading}>
               {loading ? (
                 <>
                   <span
@@ -121,7 +121,7 @@ align-items-center "  style={{ minHeight: "600px" }}
                   ></span>
                 </>
               ) : (
-                "Sign up"
+                "Sign in"
               )}
             </button>
           </div>
@@ -136,9 +136,9 @@ align-items-center "  style={{ minHeight: "600px" }}
       {showError()}
       {showMessage()}
 
-      {showForm && signupForm()}
+      {showForm && signinForm()}
     </div>
   );
 };
 
-export default SignupComponent;
+export default SigninComponent;
