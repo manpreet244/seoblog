@@ -1,7 +1,6 @@
 const User = require("../models/user");
 const shortId = require("shortid");
 const jwt = require("jsonwebtoken");
-const { expressjwt: jwtexp } = require("express-jwt");
 
 exports.signup = async (req, res) => {
   try {
@@ -55,11 +54,9 @@ exports.signin = async (req, res) => {
   try {
     const user = await User.findOne({ email }).exec();
     if (!user) {
-      return res
-        .status(400)
-        .json({
-          error: "User with that email does not exist. Please sign up.",
-        });
+      return res.status(400).json({
+        error: "User with that email does not exist. Please sign up.",
+      });
     }
 
     if (!user.authenticate(password)) {
@@ -85,10 +82,10 @@ exports.signin = async (req, res) => {
   }
 };
 //signout
-exports.signout = (req , res) =>{
-  res.clearCookie("token")
+exports.signout = (req, res) => {
+  res.clearCookie("token");
   res.json({
-    message:"Signout success"
+    message: "Signout success",
   });
 };
 //middle for proctected route(requireSignin)
@@ -107,18 +104,72 @@ exports.signout = (req , res) =>{
 
 // If invalid or missing, it returns an "Unauthorized" (401) error.
 
-
 //Require signin middleware for protected routes
 // This middleware checks if the user is authenticated before allowing access to certain routes.
-//Itcheck incoming token secret , and compare the secret we have 
+//Itcheck incoming token secret , and compare the secret we have
 // in .env file , if that matchges then we can proceed
-exports.requireSignin = jwtexp({
-  secret: process.env.JWT_SECRET,
-  algorithms: ["HS256"],
-  getToken: (req) => {
-    if (req.cookies && req.cookies.token) {
-      return req.cookies.token;
+
+// Middleware reads the token — Usually from a cookie or an Authorization header.
+
+// Middleware verifies the token — It uses your JWT secret to check the token’s signature and expiration.
+
+// If token is valid — Middleware decodes the token payload (which usually contains user info like _id, name, etc.).
+
+// Middleware attaches that decoded payload to req.user — This is the key step!
+
+exports.requireSignin = (req, res, next) => {
+  const token = req.cookies?.token;
+
+  if (!token) {
+    return res.status(401).json({ error: "Access denied. No token provided." });
+  }
+
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    req.user = decoded; // Attach user info to req.user ✅
+    next();
+  } catch (err) {
+    return res.status(401).json({ error: "Invalid or expired token." });
+  }
+};
+
+exports.authMiddleware = async (req, res, next) => {
+  const authUserId = req.user._id;
+  const user = await User.findById({ _id: authUserId });
+  if (!user) {
+    return res.status(400).json({
+      error: "User not found",
+    });
+  }
+  try {
+    req.profile = user;
+    next();
+  } catch (err) {
+    return res.status(400).json({
+      error: "User not found",
+    });
+  }
+};
+
+exports.adminMiddleware = (req, res, next) => {
+  const adminUserId = req.user._id;
+  const adminUser = User.findById({ _id: adminUserId });
+  if (!adminUser) {
+    return res.status(400).json({
+      error: "User not found",
+    });
+  }
+   if(adminUser.role !== 1){
+      return res.status(400).json({
+        error: "Admin resource. Access denied",
+      });
     }
-    return null;
-  },
-});
+  try {
+    req.profile = user;
+    next();
+  } catch (err) {
+    return res.status(400).json({
+      error: "User not found",
+    });
+  }
+}

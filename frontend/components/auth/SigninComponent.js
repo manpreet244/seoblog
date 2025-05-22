@@ -1,4 +1,4 @@
-import { useState , useEffect, use } from "react";
+import { useState } from "react";
 import { signin ,authenticate , isAuth} from "../../actions/auth";
 import Router from "next/router";
 const SigninComponent = () => {
@@ -23,10 +23,17 @@ const SigninComponent = () => {
       //save user token to cookie
       //save user info to localstorge
       //authenticate user
-      authenticate(data, ()=>
-        Router.push('/')
-    )
-    } catch (err) {
+  console.log(isAuth())
+     authenticate(data , ()=> {
+      if(isAuth() && isAuth().role === 1){
+        Router.push(`/admin`)
+      }
+        else{   
+            Router.push(`/user`)
+        }
+     })
+    }
+      catch (err) {
         console.log(err)
       setValues({
         ...values,
@@ -97,7 +104,8 @@ align-items-center "  style={{ minHeight: "600px" }}
             />
           </div>
           <div>
-            <button className="btn btn-light w-50 " disabled={loading}>
+            <button className="btn btn-light w-50 " 
+            disabled={loading}>
               {loading ? (
                 <>
                   <span

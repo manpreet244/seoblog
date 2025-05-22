@@ -99,16 +99,15 @@ export const authenticate = (response , next) => {
 }
 
 //isAuth is used to check if user is authenticated , its needed in cases
-//like protected routes, 
+
+// /auth.js
 export const isAuth = () => {
-      if(typeof window !== "undefined"){
-    const cookieChecked = getCookie('token')
-    if(cookieChecked){
-      if(localStorage.getItem('user')){
-        return JSON.parse(localStorage.getItem('user'))
-      }else{
-        return false
-      }
-    }
+  if(typeof window == "undefined"){
+    return false;
+  }
+  if(localStorage.getItem('user')){
+    return JSON.parse(localStorage.getItem('user'))
+  }else{
+    return false;
   }
 }

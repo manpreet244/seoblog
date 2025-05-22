@@ -39,8 +39,8 @@ function Header(args) {
         <Collapse isOpen={isOpen} navbar>
           <Nav className="me-auto" navbar>
             <NavItem>
-              <Link href="/components" passHref legacyBehavior>
-                <NavLink>Components</NavLink>
+              <Link href="/admin" passHref legacyBehavior>
+                <NavLink>Admin</NavLink>
               </Link>
             </NavItem>
 
