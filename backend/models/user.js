@@ -36,12 +36,13 @@ const userSchema = new mongoose.Schema({
     },
     role:{
         type:Number,
-        
+         default: 0,
     },
     photo:{
         data:Buffer,
         contentType:String
     },
+  
     resetPasswordLink: {
         type:String,
         default:""

@@ -101,13 +101,23 @@ export const authenticate = (response , next) => {
 //isAuth is used to check if user is authenticated , its needed in cases
 
 // /auth.js
+
 export const isAuth = () => {
-  if(typeof window == "undefined"){
+  console.log(typeof window +"window")
+  if (typeof window === "undefined") {
     return false;
   }
-  if(localStorage.getItem('user')){
-    return JSON.parse(localStorage.getItem('user'))
-  }else{
-    return false;
+
+  const user = localStorage.getItem('user');
+  console.log(user)
+  if (user) {
+    try {
+      return JSON.parse(user);
+    } catch (e) {
+      console.error("Error parsing user from localStorage", e);
+      return false;
+    }
   }
-}
+
+  return false;
+};

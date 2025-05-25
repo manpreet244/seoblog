@@ -23,9 +23,10 @@ const SigninComponent = () => {
       //save user token to cookie
       //save user info to localstorge
       //authenticate user
-  console.log(isAuth())
+ 
      authenticate(data , ()=> {
       if(isAuth() && isAuth().role === 1){
+        console.log(isAuth().role+"bvfcdxhhnbgvfc")
         Router.push(`/admin`)
       }
         else{   

@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { APP_NAME } from "../config";
 import Link from "next/link";
 import Router from "next/router";
+
 import {
   Collapse,
   Navbar,
@@ -19,14 +20,13 @@ import { signout, isAuth } from "../actions/auth";
 
 function Header(args) {
   const [isOpen, setIsOpen] = useState(false);
-  const [user, setUser] = useState(null); // 🔑 This is the fix
+  const [user, setUser] = useState(null); 
 
   const toggle = () => setIsOpen(!isOpen);
-
-  // ✅ Check auth only in browser
+  
   useEffect(() => {
-    setUser(isAuth()); // Set user only in client
-    isAuth() && Router.push("/"); // Redirect if user is authenticated
+    setUser(isAuth()); 
+  
   }, []);
 
   return (
@@ -38,12 +38,7 @@ function Header(args) {
         <NavbarToggler onClick={toggle} />
         <Collapse isOpen={isOpen} navbar>
           <Nav className="me-auto" navbar>
-            <NavItem>
-              <Link href="/admin" passHref legacyBehavior>
-                <NavLink>Admin</NavLink>
-              </Link>
-            </NavItem>
-
+        
             {!user && (
               <>
                 <NavItem>
@@ -58,7 +53,33 @@ function Header(args) {
                 </NavItem>
               </>
             )}
-
+          
+            {user && isAuth().role === 0 && (
+              <NavItem>
+                <Link href="/user" passHref legacyBehavior>
+                <NavLink
+                  className="nav-link"
+                  style={{ cursor: "pointer" }}
+                
+                >
+                  {`${user.name}'s Dashboard`}
+                </NavLink>
+                </Link>
+              </NavItem>
+            )}
+             {user && isAuth().role === 1 &&(
+              <NavItem>
+                <Link href="/admin" passHref legacyBehavior>
+                <NavLink
+                  className="nav-link"
+                  style={{ cursor: "pointer" }}
+                
+                >
+                  {`${user.name}'s Dashboard`}
+                </NavLink>
+                </Link>
+              </NavItem>
+            )}
             {user && (
               <NavItem>
                 <NavLink

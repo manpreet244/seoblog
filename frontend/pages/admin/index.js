@@ -1,4 +1,3 @@
-import Header from "../../components/Header";
 import Admin from "../../components/auth/Admin";
 import Layout from "../../components/Layout";
 const AdminIndex = () => {

@@ -53,6 +53,7 @@ exports.signin = async (req, res) => {
 
   try {
     const user = await User.findOne({ email }).exec();
+    console.log("User found in DB:", user);
     if (!user) {
       return res.status(400).json({
         error: "User with that email does not exist. Please sign up.",
@@ -151,25 +152,27 @@ exports.authMiddleware = async (req, res, next) => {
   }
 };
 
-exports.adminMiddleware = (req, res, next) => {
-  const adminUserId = req.user._id;
-  const adminUser = User.findById({ _id: adminUserId });
-  if (!adminUser) {
-    return res.status(400).json({
-      error: "User not found",
-    });
-  }
-   if(adminUser.role !== 1){
-      return res.status(400).json({
-        error: "Admin resource. Access denied",
-      });
-    }
+
+exports.adminMiddleware = async (req, res, next) => {
   try {
-    req.profile = user;
+    const adminUserId = req.user && req.user._id; // or req.auth._id based on JWT middleware
+    if (!adminUserId) {
+      return res.status(400).json({ error: "User ID not found in request" });
+    }
+
+    const adminUser = await User.findById(adminUserId);
+    if (!adminUser) {
+      return res.status(400).json({ error: "User not found" });
+    }
+
+    if (adminUser.role !== 1) {
+      return res.status(403).json({ error: "Admin resource. Access denied" });
+    }
+
+    req.profile = adminUser; // corrected from `user` to `adminUser`
     next();
   } catch (err) {
-    return res.status(400).json({
-      error: "User not found",
-    });
+    console.error("Error in adminMiddleware:", err);
+    return res.status(500).json({ error: "Server error" });
   }
-}
+};

@@ -16,3 +16,7 @@ input:focus{
   border: none;
   color: white;
 }
+
+#nprogress .bar{
+  height: 8px !important;
+}
