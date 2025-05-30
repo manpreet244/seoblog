@@ -8,13 +8,11 @@ const { requireSignin , adminMiddleware } = require('../controllers/auth');
 //only admin well be able to create category
 router.post('/category' , categoryValidator , runValidation , requireSignin ,adminMiddleware , create )
 //get all categories
-router.get('/categories' , requireSignin ,adminMiddleware ,list)
+router.get('/categories' ,list)
 //get single category
 router.get('/categories/:slug' ,requireSignin ,adminMiddleware , read)
 //delete category
-router.delete('/categories/:slug' ,requireSignin ,adminMiddleware , remove)
-
-
+router.delete('/category/:slug' ,requireSignin ,adminMiddleware , remove)
 
 module.exports = router
 

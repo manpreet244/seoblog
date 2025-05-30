@@ -3,6 +3,7 @@ const slugify = require('slugify');
 const { errorHandler } = require('../helpers/dbErrorHandler');
 
 exports.create = async (req, res) => {
+    console.log(req.body)
     try {
         const { name } = req.body;
         const slug = slugify(name).toLowerCase();

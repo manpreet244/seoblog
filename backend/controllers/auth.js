@@ -119,7 +119,10 @@ exports.signout = (req, res) => {
 // Middleware attaches that decoded payload to req.user — This is the key step!
 
 exports.requireSignin = (req, res, next) => {
-  const token = req.cookies?.token;
+  const authHeader = req.headers.authorization;
+  const tokenFromHeader = authHeader && authHeader.split(" ")[1];
+  const tokenFromCookie = req.cookies?.token;
+  const token = tokenFromHeader || tokenFromCookie;
 
   if (!token) {
     return res.status(401).json({ error: "Access denied. No token provided." });
@@ -127,12 +130,13 @@ exports.requireSignin = (req, res, next) => {
 
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    req.user = decoded; // Attach user info to req.user ✅
+    req.user = decoded;
     next();
   } catch (err) {
     return res.status(401).json({ error: "Invalid or expired token." });
   }
 };
+
 
 exports.authMiddleware = async (req, res, next) => {
   const authUserId = req.user._id;
