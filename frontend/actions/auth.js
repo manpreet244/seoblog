@@ -62,6 +62,7 @@ export const setCookie = (key , value) => {
 //get Cookie
 export const getCookie = (key) => {
   if(typeof window !== "undefined"){
+    console.log(cookie.get(key))
     return cookie.get(key);
   }
   return null;

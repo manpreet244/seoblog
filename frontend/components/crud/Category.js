@@ -20,7 +20,7 @@ const Category = () => {
   });
   const { name, error, success, categories, removed ,reload} = values;
   const token = getCookie("token");
- console.log(token)
+
   const loadCategories = async () => {
     const data = await getCategories();
     if (data.error) {
@@ -97,6 +97,7 @@ const showCategories = () =>{
     e.preventDefault();
 
     try {
+      console.log(token)
       const data = await createCategory({ name }, token);
 
       if (data?.error) {

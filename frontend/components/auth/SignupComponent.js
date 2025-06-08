@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
-import { signup ,isAuth} from "../../actions/auth";
+import { signup, isAuth } from "../../actions/auth";
 import Router from "next/router";
 
+// ✅ Main Signup Component
 const SignupComponent = () => {
   const [values, setValues] = useState({
     name: "",
@@ -14,39 +15,44 @@ const SignupComponent = () => {
   });
 
   const { name, email, password, error, loading, message, showForm } = values;
- useEffect(() => {
-    isAuth() && Router.push("/");
-  },[])
+
+  // 🔁 Redirect if already logged in
+  useEffect(() => {
+    if (isAuth()) Router.push("/");
+  }, []);
+
+  // 📤 Submit handler
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setValues({ ...values, error: "", loading: true });
+    setValues({ ...values, loading: true, error: "" });
+
     try {
       const data = await signup({ name, email, password });
-      console.log(data);
       setValues({
         ...values,
         name: "",
         email: "",
         password: "",
         loading: false,
-        error: "",
-        message: data.message || "Signup successfull",
+        message: data.message || "Signup successful",
         showForm: false,
       });
     } catch (err) {
       setValues({
         ...values,
-        error: err.response.data.error,
         loading: false,
-        showForm: true,
+        error: err.response?.data?.error || "Signup failed",
       });
     }
   };
 
-  const handleChange = (fieldName) => (e) => {
-    setValues({ ...values, error: "", [fieldName]: e.target.value });
+  // 📥 
+  //  handler
+  const handleChange = (field) => (e) => {
+    setValues({ ...values, error: "", [field]: e.target.value });
   };
 
+  // 🔄 Feedback elements
   const showLoading = () =>
     loading && (
       <div className="text-center my-3">
@@ -56,89 +62,81 @@ const SignupComponent = () => {
 
   const showError = () =>
     error && (
-      <div className="alert alert-danger" role="alert">
+      <div className="alert alert-danger text-center" role="alert">
         {error}
       </div>
     );
 
   const showMessage = () =>
     message && (
-      <div className="alert alert-success" role="alert">
+      <div className="alert alert-success text-center" role="alert">
         {message}
       </div>
     );
 
+  // 📝 Signup form layout
   const signupForm = () => (
-    <div
-      className=" d-flex justify-content-center  flex-column 
-align-items-center "  style={{ minHeight: "600px" }}
-    >
-      <div
-        className="w-100  rounded-4 d-flex my-form h-100
-        align-items-between flex-column justify-content-center gap-5"
-        style={{ maxWidth: "350px", minHeight: "400px", padding: "20px" }}
-      > 
-      <h4 className="text-white text-center"> SIGN UP</h4>
+    <div className="d-flex justify-content-center align-items-center" style={{ minHeight: "100vh" }}>
+      <div className="card p-4 shadow-sm" style={{ maxWidth: "400px", width: "100%", borderRadius: "12px" }}>
+        <h3 className="text-center mb-1">Sign up</h3>
+        <p className="text-center text-muted mb-4">Sign up to continue</p>
         <form onSubmit={handleSubmit}>
-          <div className="form-group mb-3">
-           
+          <div className="form-floating mb-3">
             <input
+              type="text"
+              className="form-control"
+              id="name"
+              placeholder="Name"
               value={name}
               onChange={handleChange("name")}
-              type="text"
-              className="form-control   border-0"
-              
-              placeholder="Type your name"
               required
             />
+            <label htmlFor="name">Name</label>
           </div>
-          <div className="form-group mb-3">
+          <div className="form-floating mb-3">
             <input
+              type="email"
+              className="form-control"
+              id="email"
+              placeholder="Email"
               value={email}
               onChange={handleChange("email")}
-              type="email"
-              className="form-control  border-0"
-              placeholder="Type your email"
               required
-          
             />
+            <label htmlFor="email">Email</label>
           </div>
-          <div className="form-group mb-3">
+          <div className="form-floating mb-4">
             <input
+              type="password"
+              className="form-control"
+              id="password"
+              placeholder="Password"
               value={password}
               onChange={handleChange("password")}
-              type="password"
-              className="form-control  border-0"
-              placeholder="Type your password"
               required
             />
+            <label htmlFor="password">Password</label>
           </div>
-          <div>
-            <button className="btn btn-light w-50" disabled={loading}>
-              {loading ? (
-                <>
-                  <span
-                    className="spinner-border spinner-border-sm me-2"
-                    role="status"
-                    aria-hidden="true"
-                  ></span>
-                </>
-              ) : (
-                "Sign up"
-              )}
-            </button>
-          </div>
+          <button type="submit" className="btn btn-primary w-100" disabled={loading}>
+            {loading ? (
+              <>
+                <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                Signing up...
+              </>
+            ) : (
+              "Sign up"
+            )}
+          </button>
         </form>
       </div>
     </div>
   );
 
   return (
-    <div>
+    <div className="container">
       {showLoading()}
       {showError()}
       {showMessage()}
-
       {showForm && signupForm()}
     </div>
   );

@@ -1,8 +1,9 @@
 import { useState } from "react";
-import { signin ,authenticate , isAuth} from "../../actions/auth";
+import { signin, authenticate, isAuth } from "../../actions/auth";
 import Router from "next/router";
+
 const SigninComponent = () => {
-  const [values, setValues] = useState({  
+  const [values, setValues] = useState({
     email: "miss@gmail.com",
     password: "missuuu",
     error: "",
@@ -12,125 +13,108 @@ const SigninComponent = () => {
   });
 
   const { email, password, error, loading, message, showForm } = values;
-//   useEffect(()=>{
-//     isAuth() && Router.push('/')
-//   },[])
+
+  // Optional: auto-redirect if already logged in
+  // useEffect(() => {
+  //   isAuth() && Router.push("/");
+  // }, []);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setValues({ ...values, error: "", loading: true });
+
     try {
-      const data = await signin({  email, password });
-      //save user token to cookie
-      //save user info to localstorge
-      //authenticate user
- 
-     authenticate(data , ()=> {
-      if(isAuth() && isAuth().role === 1){
-        console.log(isAuth().role+"bvfcdxhhnbgvfc")
-        Router.push(`/admin`)
-      }
-        else{   
-            Router.push(`/user`)
+      const data = await signin({ email, password });
+
+      authenticate(data, () => {
+        if (isAuth() && isAuth().role === 1) {
+          Router.push("/admin");
+        } else {
+          Router.push("/user");
         }
-     })
-    }
-      catch (err) {
-        console.log(err)
+      });
+    } catch (err) {
       setValues({
         ...values,
-        error: err.response?.data?.error,
+        error: err.response?.data?.error || "Signin failed",
         loading: false,
         showForm: true,
       });
     }
   };
 
-  const handleChange = (fieldName) => (e) => {
-    setValues({ ...values, error: "", [fieldName]: e.target.value });
+  const handleChange = (field) => (e) => {
+    setValues({ ...values, error: "", [field]: e.target.value });
   };
 
-  const showLoading = () =>
-    loading && (
-      <div className="text-center my-3">
-        <div className="spinner-border text-primary" role="status"></div>
-      </div>
-    );
-
-  const showError = () =>
-    error && (
-      <div className="alert alert-danger" role="alert">
-        {error}
-      </div>
-    );
-
-  const showMessage = () =>
-    message && (
-      <div className="alert alert-success" role="alert">
-        {message}
-      </div>
-    );
+  const showFeedback = () => (
+    <>
+      {loading && (
+        <div className="text-center my-3">
+          <div className="spinner-border text-primary" role="status" />
+        </div>
+      )}
+      {error && (
+        <div className="alert alert-danger text-center" role="alert">
+          {error}
+        </div>
+      )}
+      {message && (
+        <div className="alert alert-success text-center" role="alert">
+          {message}
+        </div>
+      )}
+    </>
+  );
 
   const signinForm = () => (
-    <div
-      className=" d-flex justify-content-center  flex-column 
-align-items-center "  style={{ minHeight: "600px" }}
-    >
-      <div
-        className="w-100  rounded-4 d-flex my-form h-100
-        align-items-between flex-column justify-content-center gap-5"
-        style={{ maxWidth: "350px", minHeight: "400px", padding: "20px" }}
-      > 
-      <h4 className="text-white text-center"> SIGN IN</h4>
-        <form onSubmit={handleSubmit}>p
-         
-          <div className="form-group mb-3">
+    <div className="d-flex justify-content-center align-items-center" style={{ minHeight: "100vh" }}>
+      <div className="card p-4 shadow border-0" style={{ maxWidth: "400px", width: "100%", borderRadius: "12px" }}>
+        <h3 className="text-center mb-1">Sign in</h3>
+        <p className="text-center text-muted mb-4">Access your account</p>
+        <form onSubmit={handleSubmit}>
+          <div className="form-floating mb-3">
             <input
+              type="email"
+              className="form-control"
+              id="signinEmail"
+              placeholder="Email"
               value={email}
               onChange={handleChange("email")}
-              type="email"
-              className="form-control  border-0"
-              placeholder="Type your email"
               required
-          
             />
+            <label htmlFor="signinEmail">Email</label>
           </div>
-          <div className="form-group mb-3">
+          <div className="form-floating mb-4">
             <input
+              type="password"
+              className="form-control"
+              id="signinPassword"
+              placeholder="Password"
               value={password}
               onChange={handleChange("password")}
-              type="password"
-              className="form-control  border-0"
-              placeholder="Type your password"
               required
             />
+            <label htmlFor="signinPassword">Password</label>
           </div>
-          <div>
-            <button className="btn btn-light w-50 " 
-            disabled={loading}>
-              {loading ? (
-                <>
-                  <span
-                    className="spinner-border spinner-border-sm me-2"
-                    role="status"
-                    aria-hidden="true"
-                  ></span>
-                </>
-              ) : (
-                "Sign in"
-              )}
-            </button>
-          </div>
+          <button type="submit" className="btn btn-primary w-100" disabled={loading}>
+            {loading ? (
+              <>
+                <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                Signing in...
+              </>
+            ) : (
+              "Sign in"
+            )}
+          </button>
         </form>
       </div>
     </div>
   );
 
   return (
-    <div>
-      {showLoading()}
-      {showError()}
-      {showMessage()}
-
+    <div className="container">
+      {showFeedback()}
       {showForm && signinForm()}
     </div>
   );

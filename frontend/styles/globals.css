@@ -1,4 +1,4 @@
-input.form-control::placeholder {
+/* input.form-control::placeholder {
   color:black;
 
 }
@@ -15,7 +15,7 @@ input:focus{
   background-color: rgb(115, 82, 79);
   border: none;
   color: white;
-}
+} */
 
 #nprogress .bar{
   height: 8px !important;
