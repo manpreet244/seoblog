@@ -12,7 +12,7 @@ export const signup = async (user) => {
         "Content-Type": "application/json",
       },
     });
-    console.log(response.data);
+   
     return response.data;
   } catch (err) {
     console.error(err);
@@ -23,7 +23,6 @@ export const signup = async (user) => {
 export const signout = async (next) => {
   try {
     const response = await axios.get(`${API}/signout`);
-    console.log(response.data);
     removeCookie("token");
     removeLocalStorage("user");
     next();
@@ -42,7 +41,7 @@ export const signin = async (user) => {
         "Content-Type": "application/json",
       },
     });
-    console.log(response.data);
+
     return response.data;
   } catch (err) {
     console.error(err);
@@ -62,7 +61,6 @@ export const setCookie = (key , value) => {
 //get Cookie
 export const getCookie = (key) => {
   if(typeof window !== "undefined"){
-    console.log(cookie.get(key))
     return cookie.get(key);
   }
   return null;
@@ -104,14 +102,12 @@ export const authenticate = (response , next) => {
 // /auth.js
 
 export const isAuth = () => {
-  console.log(typeof window +"window")
   if (typeof window === "undefined") {
     return false;
   }
 
   const user = localStorage.getItem('user');
-  console.log(user)
-  if (user) {
+    if (user) {
     try {
       return JSON.parse(user);
     } catch (e) {

@@ -15,6 +15,25 @@ export const createBlog = (blogData, token) => {
   });
 };
 
+export const listBlogsWithCategoriesAndTags = (skip , limit) => {
+  // blogData is a FormData instance including 'photo' file
+  return axios.post(`${API}/blogs-categories-tags`, {limit , skip} , {
+    headers: {
+      Accept: 'application/json',
+      'Content-Type' :'application/json'
+    },
+  })
+   .then(res => {
+      console.log("API response:", res.data);
+      return res.data;
+    })
+  .catch(err => {
+    console.error('Create blog error:', err);
+    throw err;
+  });
+};
+
+
 
 // export const getCategories = async () => {
 //   try {

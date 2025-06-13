@@ -80,6 +80,11 @@ function Header(args) {
                 </Link>
               </NavItem>
             )}
+            <NavItem>
+              <Link href="/blogs" passHref legacyBehavior>
+              <NavLink className="nav-link">Blogs</NavLink>
+              </Link>
+            </NavItem>
             {user && (
               <NavItem>
                 <NavLink
