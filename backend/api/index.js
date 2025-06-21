@@ -1,2 +1,5 @@
-const app = require("../server"); // or '../app' if named app.js
-module.exports = app;
+// /api/index.js
+const app = require("../app");
+const serverless = require("serverless-http");
+
+module.exports = serverless(app);
