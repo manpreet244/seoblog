@@ -1,7 +1,7 @@
 const Blog = require("../models/blog");
 const formidable = require("formidable");
 const slugify = require("slugify");
-const { stripHtml } = require("string-strip-html");
+const striptags = require('striptags');
 const { errorHandler } = require("../helpers/dbErrorHandler");
 const fs = require("fs");
 const { smartTrim } = require("../helpers/blog");
@@ -78,12 +78,12 @@ exports.create = async (req, res) => {
     blog.slug = slugify(titleValue.trim()).toLowerCase();
     blog.excerpt = smartTrim(bodyContent, 200, "", "...");
     blog.mtitle = `${titleValue.trim()} | ${process.env.APP_NAME}`;
-    blog.mdesc = stripHtml(bodyContent.substring(0, 160)).result;
+    blog.mdesc = striptags(bodyContent.substring(0, 160)).result;
     blog.postedBy = req.user._id;
     blog.categories = arrayOfCategories;
     blog.tags = arrayOfTags;
 
-    // Photo upload
+   
     if (files.photo) {
       const photoFile = Array.isArray(files.photo)
         ? files.photo[0]
