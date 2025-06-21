@@ -361,3 +361,27 @@ exports.photo = async (req, res) => {
     return res.status(500).json({ msg: data.message });
   }
 };
+
+
+
+exports.listRelated = async (req, res) => {
+  let limit = req.body.limit ? parseInt(req.body.limit) : 3;
+  const { _id, categories } = req.body;
+
+  try {
+    const blogs = await Blog.find({
+      _id: { $ne: _id }, // exclude current blog
+      categories: { $in: categories }, // match any category
+    })
+      .limit(limit)
+      .populate('postedBy', '_id name') // optional
+      .populate('categories', 'name slug') // optional
+      .populate('tags', 'name slug') // optional
+      .select('title slug excerpt postedBy categories tags createdAt updatedAt');
+
+    res.json(blogs);
+  } catch (err) {
+    console.error("Related blogs fetch error:", err);
+    res.status(400).json({ error: 'Could not fetch related blogs' });
+  }
+};

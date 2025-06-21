@@ -2,7 +2,7 @@ import Link from 'next/link';
 import parse from 'html-react-parser';
 import { API } from '../../config';
 const Card = ({ blog }) => {
-    // ✅ Show categories
+
     const showBlogCategories = () => {
         return blog.categories.map((c, i) => (
             <Link href={`/categories/${c.slug}`} key={i} passHref>
@@ -13,7 +13,7 @@ const Card = ({ blog }) => {
         ));
     };
 
-    // ✅ Show tags
+   
     const showBlogTags = () => {
         return blog.tags.map((t, i) => (
             <Link href={`/tags/${t.slug}`} key={i} passHref>

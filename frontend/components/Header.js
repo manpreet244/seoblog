@@ -26,69 +26,64 @@ function Header(args) {
   
   useEffect(() => {
     setUser(isAuth()); 
-  
   }, []);
 
   return (
     <div>
-      <Navbar {...args} expand="md">
+     <Navbar {...args} expand="md" className="shadow-sm py-2">
+
         <Link href="/" passHref legacyBehavior>
-          <NavLink className="font-weight-bold">{APP_NAME}</NavLink>
+          <NavLink className="fw-bold me-3">{APP_NAME}</NavLink>
         </Link>
         <NavbarToggler onClick={toggle} />
         <Collapse isOpen={isOpen} navbar>
           <Nav className="me-auto" navbar>
-        
+
             {!user && (
               <>
-                <NavItem>
+                <NavItem className="me-3">
                   <Link href="/signup" passHref legacyBehavior>
-                    <NavLink>Sign up</NavLink>
+                    <NavLink className="fw-bold">Sign up</NavLink>
                   </Link>
                 </NavItem>
-                <NavItem>
+                <NavItem className="me-3">
                   <Link href="/signin" passHref legacyBehavior>
-                    <NavLink>Signin</NavLink>
+                    <NavLink className="fw-bold">Signin</NavLink>
                   </Link>
                 </NavItem>
               </>
             )}
-          
+
             {user && isAuth().role === 0 && (
-              <NavItem>
+              <NavItem className="me-3">
                 <Link href="/user" passHref legacyBehavior>
-                <NavLink
-                  className="nav-link"
-                  style={{ cursor: "pointer" }}
-                
-                >
-                  {`${user.name}'s Dashboard`}
-                </NavLink>
+                  <NavLink className="fw-bold" style={{ cursor: "pointer" }}>
+                    {`${user.name}'s Dashboard`}
+                  </NavLink>
                 </Link>
               </NavItem>
             )}
-             {user && isAuth().role === 1 &&(
-              <NavItem>
+
+            {user && isAuth().role === 1 && (
+              <NavItem className="me-3">
                 <Link href="/admin" passHref legacyBehavior>
-                <NavLink
-                  className="nav-link"
-                  style={{ cursor: "pointer" }}
-                
-                >
-                  {`${user.name}'s Dashboard`}
-                </NavLink>
+                  <NavLink className="fw-bold" style={{ cursor: "pointer" }}>
+                    {`${user.name}'s Dashboard`}
+                  </NavLink>
                 </Link>
               </NavItem>
             )}
-            <NavItem>
+
+            <NavItem className="me-3">
               <Link href="/blogs" passHref legacyBehavior>
-              <NavLink className="nav-link">Blogs</NavLink>
+                <NavLink className="fw-bold">Blogs</NavLink>
               </Link>
             </NavItem>
+
             {user && (
-              <NavItem>
+              <NavItem className="me-3">
                 <NavLink
-                  className="nav-link"
+                  className="fw-bold"
                   style={{ cursor: "pointer" }}
                   onClick={() => {
                     signout(() => {
@@ -97,13 +92,13 @@ function Header(args) {
                     });
                   }}
                 >
-                  Signout
+                  SEO Blog
                 </NavLink>
               </NavItem>
             )}
 
-            <UncontrolledDropdown nav inNavbar>
-              <DropdownToggle nav caret>
+            <UncontrolledDropdown nav inNavbar className="me-3">
+              <DropdownToggle nav caret className="fw-bold">
                 Options
               </DropdownToggle>
               <DropdownMenu end>
@@ -114,7 +109,7 @@ function Header(args) {
               </DropdownMenu>
             </UncontrolledDropdown>
           </Nav>
-          <NavbarText>Simple Text</NavbarText>
+          <NavbarText className="fw-bold">Simple Text</NavbarText>
         </Collapse>
       </Navbar>
     </div>
