@@ -23,7 +23,12 @@ mongoose
 app.use(morgan("dev"));
 app.use(bodyParser.json());
 app.use(cookieParser());
-app.use(cors());
+app.use(cors({
+  origin: '*',  // allow all origins
+  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+  credentials: true, // if you want to allow cookies/credentials
+}));
+
 
 app.get("/", (req, res) => {
   res.send("Hello from backend!");
