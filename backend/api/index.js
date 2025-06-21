@@ -1,8 +1,2 @@
-const express = require("express");
-const app = express();
-
-app.get("/", (req, res) => res.send("Express on Vercel"));
-
-app.listen(3000, () => console.log("Server ready on port 3000."));
-
+const app = require("../server"); // or '../app' if named app.js
 module.exports = app;
