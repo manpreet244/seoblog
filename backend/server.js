@@ -27,6 +27,10 @@ app.use(bodyParser.json());
 app.use(cookieParser());
 app.use(cors());
 // Routes
+app.get('/', (req, res) => {
+  res.send('Hello from backend!');
+});
+
 app.use("/api", blogRoutes);
 app.use("/api", authRoutes);
 app.use("/api", userRoutes);
