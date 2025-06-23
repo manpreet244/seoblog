@@ -13,13 +13,17 @@ import "react-quill/dist/quill.snow.css";
 import { Quillmodules, QuillFormats } from "../../helpers/quill";
 
 const BlogUpdate = ({ router }) => {
-  const [title, setTitle] = useState("");
+
   const [body, setBody] = useState("");
-  const [photo, setPhoto] = useState(null);
+
   const [formData, setFormData] = useState(new FormData());
   const [values, setValues] = useState({
+    title:"",
     error: "",
     success: "",
+    formData: "",
+    title: "",
+
   });
   const [blog, setBlog] = useState(null);
 
@@ -37,9 +41,8 @@ const BlogUpdate = ({ router }) => {
         if (data.error) {
           setValues({ ...values, error: data.error });
         } else {
-          setTitle(data.title);
-          setBody(data.body);
-          setBlog(data);
+          setValues({...values , title:data.title})
+  
           formData.set("title", data.title);
           formData.set("body", data.body);
         }
@@ -51,7 +54,9 @@ const BlogUpdate = ({ router }) => {
     setBody(e);
     formData.set("body", e);
   };
-
+  const editBlog = () => {
+    console.log('update')
+  }
   const handleChange = (name) => (e) => {
     const value = name === "photo" ? e.target.files[0] : e.target.value;
     formData.set(name, value);
@@ -62,7 +67,52 @@ const BlogUpdate = ({ router }) => {
       setTitle(value);
     }
   };
-
+  const updateBlogForm = () => (
+     <div className="card shadow-sm mb-4 p-4">
+       <form onSubmit={editBlog}>
+         <div className="form-group mb-3">
+           <label className="form-label fw-bold">Title</label>
+           <input
+             type="text"
+             className="form-control"
+             value={title}
+             onChange={handleChange("title")}
+             placeholder="Enter blog title"
+           />
+         </div>
+ 
+         <div className="form-group mb-3">
+           <ReactQuill
+             modules={Quillmodules}
+             formats={QuillFormats}
+             value={body}
+             placeholder="Write something amazing..."
+             onChange={handleBody}
+           />
+         </div>
+ 
+         <div className="form-group mb-3">
+           <label className="btn btn-outline-info btn-sm">
+             Upload featured image
+             <input
+               onChange={handleChange("photo")}
+               type="file"
+               accept="image/*"
+               hidden
+             />
+           </label>
+           {photo && <span className="ms-2 text-success">{photo.name}</span>}
+         </div>
+ 
+         <div>
+           <button type="submit" className="btn btn-primary btn-sm">
+             Publish
+           </button>
+         </div>
+       </form>
+     </div>
+   );
+ 
   const publishBlog = (e) => {
     e.preventDefault();
     const slug = router.query.slug;
