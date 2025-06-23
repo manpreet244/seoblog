@@ -48,7 +48,7 @@ function Header(args) {
                 </NavItem>
                 <NavItem className="me-3">
                   <Link href="/signin" passHref legacyBehavior>
-                    <NavLink className="fw-bold">Signin</NavLink>
+                    <NavLink className="fw-bold">Sign in</NavLink>
                   </Link>
                 </NavItem>
               </>
@@ -92,7 +92,7 @@ function Header(args) {
                     });
                   }}
                 >
-                  SEO Blog
+                  Sign out
                 </NavLink>
               </NavItem>
             )}

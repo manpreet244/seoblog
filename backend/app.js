@@ -24,9 +24,9 @@ app.use(morgan("dev"));
 app.use(bodyParser.json());
 app.use(cookieParser());
 app.use(cors({
-  origin: '*',  // allow all origins
+  origin: '*',  
   methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-  credentials: true, // if you want to allow cookies/credentials
+  credentials: true, 
 }));
 
 
