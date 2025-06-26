@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { API } from '../config';
+import queryString from 'query-string';
 export const createBlog = (blogData, token) => {
   // blogData is a FormData instance including 'photo' file
   return axios.post(`${API}/blog`, blogData, {
@@ -42,6 +43,7 @@ export const singleBlog = (slug) => {
       return { error: err}; 
     });
 };
+
 
 
 export const listRelated = (blog ) => {
@@ -101,6 +103,27 @@ export const updateBlog = (blogData, token , slug) => {
     throw err;
   });
 };
+
+
+
+export const listSearch = (params) => {
+  let query = queryString.stringify(params);
+  return axios
+    .get(`${API}/blogs/search?${query}`) 
+    .then((res) => res.data)
+    .catch((err) => {
+      return { error: err };
+    });
+};
+
+
+
+
+
+
+
+
+
 
 
 // export const getCategories = async () => {

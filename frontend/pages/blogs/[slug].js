@@ -21,6 +21,24 @@ const SingleBlog = () => {
     }
   }, [slug]);
 
+  
+   const head = () => (
+  <Head>
+    <title>{blog.title} | {APP_NAME}</title>
+    <meta name="description" content={blog.mdesc} />
+    <link rel="canonical" href={`${DOMAIN}/blogs/${slug}`} />
+    <meta property="og:title" content={`${blog.title} | ${APP_NAME}`} />
+    <meta property="og:description" content={blog.mdesc} />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={`${DOMAIN}/blogs/${slug}`} />
+    <meta property="og:site_name" content={APP_NAME} />
+    <meta property="og:image" content={`${API}/blog/photo/${blog.slug}`} />
+    <meta property="og:image:secure_url" content={`${API}/blog/photo/${blog.slug}`} />
+    <meta property="og:image:type" content="image/jpg" />
+    {/* <meta property="fb:app_id" content={FB_APP_ID} /> */}
+  </Head>
+);
+
   const fetchBlogData = async (slug) => {
     const data = await singleBlog(slug);
     if (data.error) {
@@ -75,14 +93,8 @@ const SingleBlog = () => {
 
   return (
     <>
+    {head()}
       <Layout>
-        <Head>
-          <title>
-            {blog.title} | {APP_NAME}
-          </title>
-          <meta name="description" content={blog.excerpt} />
-          <link rel="canonical" href={`${DOMAIN}/blogs/${blog.slug}`} />
-        </Head>
 
         <main className="bg-light py-5">
           <div className="container">
@@ -97,9 +109,13 @@ const SingleBlog = () => {
               <div className="card-body">
                 <h1 className="card-title display-5 fw-bold">{blog.title}</h1>
                 <p className="text-muted mb-3">
-                  ✍️ <strong>{blog.postedBy?.name}</strong> | 🗓{" "}
+                  ✍️ <strong>
+                    <Link href={`/profile/${blog.postedBy?.userName}`}>
+                    
+                  {blog.postedBy?.userName}</Link></strong> | 🗓{" "}
                   {new Date(blog.updatedAt).toLocaleDateString()}
                 </p>
+
 
                 <div className="mb-3">{showBlogCategories()}</div>
                 <div className="mb-4">{showBlogTags()}</div>

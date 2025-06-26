@@ -64,7 +64,9 @@ const SmallCard = ({ blog }) => {
           {parse(blog.excerpt)}
         </div>
         <small className="text-muted d-block mt-2">
-          ✍️ <Link href="/new"><strong>{blog.postedBy?.name}</strong> </Link>| 🕒 {getRelativeTime(blog.updatedAt)}
+           <Link href={`/profile/${blog.postedBy?.userName}`}> ✍️ {' '} <span className="fw-semibold">{blog.postedBy?.userName}</span>
+                   {' '} |</Link>{' '} 
+                    🗓 {new Date(blog.updatedAt).toLocaleDateString()}
         </small>
       </div>
     </div>

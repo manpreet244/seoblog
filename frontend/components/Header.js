@@ -17,6 +17,7 @@ import {
   NavLink,
 } from "reactstrap";
 import { signout, isAuth } from "../actions/auth";
+import Search from './blog/Search';
 
 function Header(args) {
   const [isOpen, setIsOpen] = useState(false);
@@ -112,6 +113,7 @@ function Header(args) {
           <NavbarText className="fw-bold">Simple Text</NavbarText>
         </Collapse>
       </Navbar>
+      <Search/>
     </div>
   );
 }

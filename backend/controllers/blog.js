@@ -89,7 +89,7 @@ exports.list = async (req, res) => {
     const blogs = await Blog.find({})
       .populate("categories", "_id name slug")
       .populate("tags", "_id name slug")
-      .populate("postedBy", "_id name username")
+      .populate("postedBy", "_id name userName")
       .select("_id title slug excerpt categories tags postedBy createdAt updatedAt");
 
     res.json(blogs);
@@ -107,7 +107,7 @@ exports.listAllBlogsCategoriesTags = async (req, res) => {
     const blogs = await Blog.find({})
       .populate("categories", "_id name slug")
       .populate("tags", "_id name slug")
-      .populate("postedBy", "_id name username profile")
+      .populate("postedBy", "_id name userName profile")
       .sort({ createdAt: -1 })
       .skip(skip)
       .limit(limit)
@@ -129,7 +129,7 @@ exports.read = async (req, res) => {
     const data = await Blog.findOne({ slug })
       .populate("categories", "_id name slug")
       .populate("tags", "_id name slug")
-      .populate("postedBy", "_id name username")
+      .populate("postedBy", "_id name userName")
       .select("_id title body slug mtitle mdesc categories tags postedBy createdAt updatedAt");
 
     if (!data) {
@@ -264,7 +264,7 @@ exports.listRelated = async (req, res) => {
       categories: { $in: categories },
     })
       .limit(limit)
-      .populate("postedBy", "_id name")
+      .populate("postedBy", "_id name userName")
       .populate("categories", "name slug")
       .populate("tags", "name slug")
       .select("title slug excerpt postedBy categories tags createdAt updatedAt");
@@ -272,5 +272,26 @@ exports.listRelated = async (req, res) => {
     res.json(blogs);
   } catch (err) {
     res.status(400).json({ error: "Could not fetch related blogs" });
+  }
+};
+//list search
+exports.listSearch = async (req, res) => {
+  const { search } = req.query;
+
+  try {
+    if (search) {
+      const data = await Blog.find({
+        $or: [
+          { title: { $regex: search, $options: 'i' } },
+          { body: { $regex: search, $options: 'i' } }
+        ]
+      });
+
+      return res.json(data).select('-photo -body -createdAt -updatedAt');
+    } else {
+      return res.status(400).json({ error: "Search query is required" });
+    }
+  } catch (err) {
+    return res.status(400).json({ error: errorHandler(err) });
   }
 };

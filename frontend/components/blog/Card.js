@@ -31,7 +31,8 @@ const Card = ({ blog }) => {
                     <h2 className="h4 text-primary fw-bold mb-1 hover-underline">{blog.title}</h2>
                 </Link>
                 <p className="text-secondary small mb-0">
-                    ✍️ <span className="fw-semibold">{blog.postedBy?.name}</span> |
+                   <Link href={`/profile/${blog.postedBy?.userName}`}> ✍️ {' '} <span className="fw-semibold">{blog.postedBy?.userName}</span>
+                   {' '} |</Link>{' '} 
                     🗓 {new Date(blog.updatedAt).toLocaleDateString()}
                 </p>
             </header>
