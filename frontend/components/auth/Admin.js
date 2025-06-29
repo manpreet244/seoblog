@@ -4,7 +4,7 @@ import {useEffect} from 'react';
 import Router from 'next/router';
 import { isAuth } from '../../actions/auth';
 
-const Private = ({ children }) => {
+const Admin = ({ children }) => {
   useEffect(() => {
     if (!isAuth()) {
       Router.push('/signin');
@@ -16,4 +16,4 @@ const Private = ({ children }) => {
   return <>{children}</>;
 }
 
-export default Private;
+export default Admin;

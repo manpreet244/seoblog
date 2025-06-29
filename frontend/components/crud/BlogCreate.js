@@ -87,11 +87,15 @@ const publishBlog = async (e) => {
     setPhoto(null);
     localStorage.removeItem("blog");
   } catch (err) {
-    // Axios error handling:
-    const apiError =
-      err.response && err.response.data && err.response.data.error
-        ? err.response.data.error
-        : "Something went wrong. Please try again.";
+    let apiError = "Something went wrong. Please try again.";
+
+    if (err.response) {
+      if (err.response.status === 403) {
+        apiError = "Admin access only. You are not authorized to perform this action.";
+      } else if (err.response.data && err.response.data.error) {
+        apiError = err.response.data.error;
+      }
+    }
 
     setValues({ ...values, error: apiError, success: "" });
   }

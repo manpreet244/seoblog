@@ -14,11 +14,6 @@ const SigninComponent = () => {
 
   const { email, password, error, loading, message, showForm } = values;
 
-  // Optional: auto-redirect if already logged in
-  // useEffect(() => {
-  //   isAuth() && Router.push("/");
-  // }, []);
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     setValues({ ...values, error: "", loading: true });
@@ -68,9 +63,17 @@ const SigninComponent = () => {
   );
 
   const signinForm = () => (
-    <div className="d-flex justify-content-center align-items-center" style={{ minHeight: "100vh" }}>
-      <div className="card p-4 shadow border-0" style={{ maxWidth: "400px", width: "100%", borderRadius: "12px" }}>
-        <h3 className="text-center mb-1">Sign in</h3>
+<div className="d-flex justify-content-center " style={{ marginTop:"50px" ,inHeight: "100vh" }}>      <div
+        className="card p-4 shadow"
+        style={{
+          maxWidth: "420px",
+          width: "100%",
+          borderRadius: "16px",
+          border: "1px solid #ddd",
+          backgroundColor: "#fff"
+        }}
+      >
+        <h3 className="text-center mb-1" style={{ color: "#c634eb", fontWeight: "700" }}>Sign in</h3>
         <p className="text-center text-muted mb-4">Access your account</p>
         <form onSubmit={handleSubmit}>
           <div className="form-floating mb-3">
@@ -97,7 +100,17 @@ const SigninComponent = () => {
             />
             <label htmlFor="signinPassword">Password</label>
           </div>
-          <button type="submit" className="btn btn-primary w-100" disabled={loading}>
+          <button
+            type="submit"
+            className="btn w-100"
+            style={{
+              backgroundColor: "#c634eb",
+              borderColor: "#c634eb",
+              color: "#fff",
+              fontWeight: "500"
+            }}
+            disabled={loading}
+          >
             {loading ? (
               <>
                 <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>

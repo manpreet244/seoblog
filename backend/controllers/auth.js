@@ -1,6 +1,8 @@
 const User = require("../models/user");
 const shortId = require("shortid");
 const jwt = require("jsonwebtoken");
+const { errorHandler } = require("../helpers/dbErrorHandler");
+
 
 exports.signup = async (req, res) => {
   try {
@@ -140,7 +142,7 @@ exports.requireSignin = (req, res, next) => {
 
 exports.authMiddleware = async (req, res, next) => {
   const authUserId = req.user._id;
-  const user = await User.findById({ _id: authUserId });
+  const user = await User.findById(authUserId);
   if (!user) {
     return res.status(400).json({
       error: "User not found",
@@ -180,3 +182,18 @@ exports.adminMiddleware = async (req, res, next) => {
     return res.status(500).json({ error: "Server error" });
   }
 };
+
+
+exports.canUpdateDeleteBlog = async (req , res , next) =>{
+  try{
+     const slug = req.params.slug.toLowerCase()
+   const data = await Blog.findOne({slug})
+   let authorisedUser = data.postedBy._id.toString() === req.profile._id.toString()
+   if(!authorisedUser){
+    return res.status(400).json({error: 'You are not authorised .'})
+   }
+   next()
+  }catch(error){
+    return res.status(500).json({ error: errorHandler});
+  }
+}

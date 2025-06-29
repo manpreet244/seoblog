@@ -2,119 +2,194 @@ import { useState, useEffect } from "react";
 import { APP_NAME } from "../config";
 import Link from "next/link";
 import Router from "next/router";
-
 import {
-  Collapse,
   Navbar,
-  NavbarToggler,
   Nav,
   NavItem,
-  UncontrolledDropdown,
-  DropdownToggle,
-  DropdownMenu,
-  DropdownItem,
-  NavbarText,
   NavLink,
+  Container,
+  NavbarToggler,
+  Collapse,
 } from "reactstrap";
 import { signout, isAuth } from "../actions/auth";
-import Search from './blog/Search';
+import Search from "./blog/Search";
 
-function Header(args) {
+function Header() {
+  const [user, setUser] = useState(null);
   const [isOpen, setIsOpen] = useState(false);
-  const [user, setUser] = useState(null); 
 
-  const toggle = () => setIsOpen(!isOpen);
-  
   useEffect(() => {
-    setUser(isAuth()); 
+    setUser(isAuth());
   }, []);
 
+  const toggle = () => setIsOpen(!isOpen);
+
+  const handleSignout = () => {
+    signout(() => {
+      setUser(null);
+      Router.push("/");
+      setIsOpen(false);
+    });
+  };
+
   return (
-    <div>
-     <Navbar {...args} expand="md" className="shadow-sm py-2">
+    <>
+      <Navbar
+        expand="md"
+        light
+        style={{
+          background: "linear-gradient(to right, #fdfbff, #f0f0f5)",
+          paddingTop: "0.6rem",
+          paddingBottom: "0.6rem",
+          boxShadow: "0 2px 6px rgba(0, 0, 0, 0.05)",
+        }}
+      >
+        <Container fluid className="d-flex align-items-center justify-content-between px-4">
+          {/* Left: Brand */}
+          <div className="d-flex align-items-center">
+            <Link href="/" passHref legacyBehavior>
+              <NavLink
+                style={{
+                  fontWeight: "bold",
+                  fontSize: "1.25rem",
+                  color: "#c634eb",
+                  textDecoration: "none",
+                }}
+              >
+                {APP_NAME}
+              </NavLink>
+            </Link>
+          </div>
 
-        <Link href="/" passHref legacyBehavior>
-          <NavLink className="fw-bold me-3">{APP_NAME}</NavLink>
-        </Link>
-        <NavbarToggler onClick={toggle} />
-        <Collapse isOpen={isOpen} navbar>
-          <Nav className="me-auto" navbar>
+          {/* Toggler for mobile */}
+          <NavbarToggler onClick={toggle} className="d-md-none" />
 
-            {!user && (
-              <>
-                <NavItem className="me-3">
-                  <Link href="/signup" passHref legacyBehavior>
-                    <NavLink className="fw-bold">Sign up</NavLink>
+          {/* Center + Right Nav Links */}
+<Collapse isOpen={isOpen} navbar className="d-md-flex justify-content-end align-items-center">
+
+            <Nav navbar className="d-flex align-items-center flex-column gap-2  flex-md-row">
+              {!user && (
+                <>
+                  <NavItem>
+                    <Link href="/signup" passHref legacyBehavior>
+                      <NavLink
+                        style={{
+                          fontWeight: "500",
+                          color: "#312a33",
+                          textDecoration: "none",
+                        }}
+                        onClick={() => setIsOpen(false)}
+                      >
+                        Sign up
+                      </NavLink>
+                    </Link>
+                  </NavItem>
+                  <NavItem>
+                    <Link href="/signin" passHref legacyBehavior>
+                      <NavLink
+                        style={{
+                          fontWeight: "500",
+                          color: "#312a33",
+                          textDecoration: "none",
+                        }}
+                        onClick={() => setIsOpen(false)}
+                      >
+                        Sign in
+                      </NavLink>
+                    </Link>
+                  </NavItem>
+                </>
+              )}
+
+              {user?.role === 0 && (
+                <NavItem>
+                  <Link href="/user" passHref legacyBehavior>
+                    <NavLink
+                      style={{
+                        fontWeight: "500",
+                        color: "#312a33",
+                        textDecoration: "none",
+                      }}
+                      onClick={() => setIsOpen(false)}
+                    >
+                      {`${user.name}'s Dashboard`}
+                    </NavLink>
                   </Link>
                 </NavItem>
-                <NavItem className="me-3">
-                  <Link href="/signin" passHref legacyBehavior>
-                    <NavLink className="fw-bold">Sign in</NavLink>
+              )}
+
+              {user?.role === 1 && (
+                <NavItem>
+                  <Link href="/admin" passHref legacyBehavior>
+                    <NavLink
+                      style={{
+                        fontWeight: "500",
+                        color: "#312a33",
+                        textDecoration: "none",
+                      }}
+                      onClick={() => setIsOpen(false)}
+                    >
+                      {`${user.name}'s Dashboard`}
+                    </NavLink>
                   </Link>
                 </NavItem>
-              </>
-            )}
+              )}
 
-            {user && isAuth().role === 0 && (
-              <NavItem className="me-3">
-                <Link href="/user" passHref legacyBehavior>
-                  <NavLink className="fw-bold" style={{ cursor: "pointer" }}>
-                    {`${user.name}'s Dashboard`}
+              <NavItem>
+                <Link href="/user/crud/create" passHref legacyBehavior>
+                  <NavLink
+                    style={{
+                      backgroundColor: "#c634eb",
+                      color: "#fff",
+                      padding: "6px 14px",
+                      borderRadius: "8px",
+                      fontWeight: "500",
+                      textDecoration: "none",
+                    }}
+                    onClick={() => setIsOpen(false)}
+                  >
+                    Write a Blog
                   </NavLink>
                 </Link>
               </NavItem>
-            )}
 
-            {user && isAuth().role === 1 && (
-              <NavItem className="me-3">
-                <Link href="/admin" passHref legacyBehavior>
-                  <NavLink className="fw-bold" style={{ cursor: "pointer" }}>
-                    {`${user.name}'s Dashboard`}
+              <NavItem>
+                <Link href="/blogs" passHref legacyBehavior>
+                  <NavLink
+                    style={{
+                      fontWeight: "500",
+                      color: "#312a33",
+                      textDecoration: "none",
+                    }}
+                    onClick={() => setIsOpen(false)}
+                  >
+                    Blogs
                   </NavLink>
                 </Link>
               </NavItem>
-            )}
 
-            <NavItem className="me-3">
-              <Link href="/blogs" passHref legacyBehavior>
-                <NavLink className="fw-bold">Blogs</NavLink>
-              </Link>
-            </NavItem>
-
-            {user && (
-              <NavItem className="me-3">
-                <NavLink
-                  className="fw-bold"
-                  style={{ cursor: "pointer" }}
-                  onClick={() => {
-                    signout(() => {
-                      setUser(null);
-                      Router.push("/");
-                    });
-                  }}
-                >
-                  Sign out
-                </NavLink>
-              </NavItem>
-            )}
-
-            <UncontrolledDropdown nav inNavbar className="me-3">
-              <DropdownToggle nav caret className="fw-bold">
-                Options
-              </DropdownToggle>
-              <DropdownMenu end>
-                <DropdownItem>Option 1</DropdownItem>
-                <DropdownItem>Option 2</DropdownItem>
-                <DropdownItem divider />
-                <DropdownItem>Reset</DropdownItem>
-              </DropdownMenu>
-            </UncontrolledDropdown>
-          </Nav>
-          <NavbarText className="fw-bold">Simple Text</NavbarText>
-        </Collapse>
+              {user && (
+                <NavItem>
+                  <NavLink
+                    onClick={handleSignout}
+                    style={{
+                      fontWeight: "500",
+                      color: "#312a33",
+                      cursor: "pointer",
+                      textDecoration: "none",
+                    }}
+                  >
+                    Sign out
+                  </NavLink>
+                </NavItem>
+              )}
+            </Nav>
+          </Collapse>
+        </Container>
       </Navbar>
-      <Search/>
-    </div>
+
+      <Search />
+    </>
   );
 }
 

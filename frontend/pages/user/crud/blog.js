@@ -1,15 +1,15 @@
 import Link from "next/link";
-import Admin from "../../../components/auth/Admin";
+import Private from "../../../components/auth/Private";
 import Layout from "../../../components/Layout";
 import BlogCreate from "../../../components/crud/BlogCreate";
-const Blog = () => {
+const CreateBlog = () => {
   return (
     <Layout>
-      <Admin>
+      <Private>
         <div className="container-fluid px-4">
           <div className="row">
             <div className="col-md-12 pt-5 pb-5">
-              <h2>Manage Blogs</h2>
+              <h2>Manage Categories and Tags</h2>
             </div>
             <div className="col-md-12">
               <ul class="list-group">
@@ -19,9 +19,9 @@ const Blog = () => {
          
           </div>
         </div>
-      </Admin>
+      </Private>
     </Layout>
   );
 };
 
-export default Blog;
+export default CreateBlog;

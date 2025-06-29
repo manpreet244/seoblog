@@ -104,30 +104,122 @@ const Blogs = ({ blogs, categories, tags, totalBlogs, blogLimit, blogSkip, route
     <>
       {head()}
       <Layout>
-        <main className="container py-5">
-          <div className="text-center mb-5">
-            <h1 className="display-5 fw-bold text-info">📰 Latest Blog Posts</h1>
-            <p className="text-muted">Explore tech, development, and more from our authors.</p>
-          </div>
+     <main
+  className="container py-5"
+  style={{
+    color: "#312a33",
+  }}
+>
+  <div className="text-center mb-5">
+    <h1
+      className="display-5 fw-bold"
+      style={{ color: "#c634eb" }}
+    >
+      Latest Blog Posts
+    </h1>
+    <p className="lead">Explore tech, development, and more from our authors.</p>
+  </div>
 
-          <section className="mb-5">
-            <div className="mb-4 text-center">
-              <h5 className="text-dark fw-semibold mb-3">📂 Categories</h5>
-              <div className="d-flex flex-wrap justify-content-center">{showAllCategories()}</div>
-            </div>
+  <section className="mb-5">
+    <div className="mb-4 text-center">
+      <h5 className="fw-semibold mb-3" style={{ color: "#c634eb" }}>
+        📂 Categories
+      </h5>
+      <div className="d-flex flex-wrap justify-content-center gap-2">
+        {categories?.map((c, i) => (
+          <Link
+            key={i}
+            href={`/categories/${c.slug}`}
+            style={{
+              textDecoration: "none",
+              backgroundColor: "#c634eb",
+              color: "white",
+              padding: "8px 16px",
+              borderRadius: "20px",
+              fontWeight: 500,
+              fontSize: "0.9rem",
+            }}
+          >
+            {c.name}
+          </Link>
+        ))}
+      </div>
+    </div>
 
-            <div className="text-center">
-              <h5 className="text-dark fw-semibold mb-3">🏷️ Tags</h5>
-              <div className="d-flex flex-wrap justify-content-center">{showAllTags()}</div>
-            </div>
-          </section>
+    <div className="text-center">
+      <h5 className="fw-semibold mb-3" style={{ color: "#c634eb" }}>
+        🏷️ Tags
+      </h5>
+      <div className="d-flex flex-wrap justify-content-center gap-2">
+        {tags?.map((t, i) => (
+          <Link
+            key={i}
+            href={`/tags/${t.slug}`}
+            style={{
+              textDecoration: "none",
+              border: "2px solid #c634eb",
+              color: "#c634eb",
+              padding: "8px 16px",
+              borderRadius: "20px",
+              fontWeight: 500,
+              fontSize: "0.9rem",
+            }}
+          >
+            {t.name}
+          </Link>
+        ))}
+      </div>
+    </div>
+  </section>
 
-          <div className="px-md-5">
-            {showAllBlogs()}
-            {showLoadedBlogs()}
-            {loadMoreButton()}
-          </div>
-        </main>
+  <div className="px-md-5">
+    {blogs.map((blog, i) => (
+      <article
+        key={i}
+        className="card mb-4 border-0 shadow-sm p-4"
+        style={{
+          backgroundColor: "#fff",
+          borderLeft: "5px solid #c634eb",
+        }}
+      >
+        <Card blog={blog} />
+      </article>
+    ))}
+
+    {loadedBlogs.map((blog, i) => (
+      <article
+        key={i}
+        className="card mb-4 border-0 shadow-sm p-4"
+        style={{
+          backgroundColor: "#fff",
+          borderLeft: "5px solid #c634eb",
+        }}
+      >
+        <Card blog={blog} />
+      </article>
+    ))}
+
+    {size > 0 && size >= limit && (
+      <div className="text-center mt-4">
+        <button
+          className="btn"
+          onClick={loadMore}
+          style={{
+            backgroundColor: "#c634eb",
+            color: "white",
+            padding: "10px 30px",
+            fontSize: "1rem",
+            borderRadius: "25px",
+          }}
+        >
+          Load More
+        </button>
+      </div>
+    )}
+  </div>
+</main>
+
+
       </Layout>
     </>
   );

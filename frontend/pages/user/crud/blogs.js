@@ -1,25 +1,28 @@
 import Link from "next/link";
-import Admin from "../../../components/auth/Admin";
+import Private from "../../../components/auth/Private";
 import Layout from "../../../components/Layout";
-import BlogCreate from "../../../components/crud/BlogCreate";
+import {BlogRead} from "../../../components/crud/BlogRead";
+import {isAuth} from '../../../actions/auth'
+
 const Blog = () => {
+    const username = isAuth() && isAuth().userName
   return (
     <Layout>
-      <Admin>
+      <Private>
         <div className="container-fluid px-4">
           <div className="row">
             <div className="col-md-12 pt-5 pb-5">
               <h2>Manage Blogs</h2>
             </div>
             <div className="col-md-12">
-              <ul class="list-group">
-               <BlogCreate/>
-              </ul>
+            
+               <BlogRead username = {username}/>
+            
             </div>
          
           </div>
         </div>
-      </Admin>
+      </Private>
     </Layout>
   );
 };

@@ -4,6 +4,7 @@ import '../styles/globals.css';  // <-- your global CSS here
 // pages/_app.js
 import 'nprogress/nprogress.css'; // Required for progress bar styling
 import NProgress from 'nprogress';
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 
 NProgress.configure({ showSpinner: false });

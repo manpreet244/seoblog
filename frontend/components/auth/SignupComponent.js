@@ -2,7 +2,6 @@ import { useState, useEffect } from "react";
 import { signup, isAuth } from "../../actions/auth";
 import Router from "next/router";
 
-// ✅ Main Signup Component
 const SignupComponent = () => {
   const [values, setValues] = useState({
     name: "",
@@ -16,12 +15,10 @@ const SignupComponent = () => {
 
   const { name, email, password, error, loading, message, showForm } = values;
 
-  // 🔁 Redirect if already logged in
   useEffect(() => {
     if (isAuth()) Router.push("/");
   }, []);
 
-  // 📤 Submit handler
   const handleSubmit = async (e) => {
     e.preventDefault();
     setValues({ ...values, loading: true, error: "" });
@@ -46,13 +43,10 @@ const SignupComponent = () => {
     }
   };
 
-  // 📥 
-  //  handler
   const handleChange = (field) => (e) => {
     setValues({ ...values, error: "", [field]: e.target.value });
   };
 
-  // 🔄 Feedback elements
   const showLoading = () =>
     loading && (
       <div className="text-center my-3">
@@ -74,11 +68,19 @@ const SignupComponent = () => {
       </div>
     );
 
-  // 📝 Signup form layout
   const signupForm = () => (
-    <div className="d-flex justify-content-center align-items-center" style={{ minHeight: "100vh" }}>
-      <div className="card p-4 shadow-sm" style={{ maxWidth: "400px", width: "100%", borderRadius: "12px" }}>
-        <h3 className="text-center mb-1">Sign up</h3>
+    <div className="d-flex justify-content-center " style={{ marginTop:"50px" ,inHeight: "100vh" }}>
+      <div
+        className="card p-4 shadow-sm"
+        style={{
+          maxWidth: "420px",
+          width: "100%",
+          borderRadius: "16px",
+          border: "1px solid #ddd",
+          backgroundColor: "#fff"
+        }}
+      >
+        <h3 className="text-center mb-1" style={{ color: "#c634eb", fontWeight: 700 }}>Sign up</h3>
         <p className="text-center text-muted mb-4">Sign up to continue</p>
         <form onSubmit={handleSubmit}>
           <div className="form-floating mb-3">
@@ -117,7 +119,17 @@ const SignupComponent = () => {
             />
             <label htmlFor="password">Password</label>
           </div>
-          <button type="submit" className="btn btn-primary w-100" disabled={loading}>
+          <button
+            type="submit"
+            className="btn w-100"
+            style={{
+              backgroundColor: "#c634eb",
+              borderColor: "#c634eb",
+              color: "#fff",
+              fontWeight: "500"
+            }}
+            disabled={loading}
+          >
             {loading ? (
               <>
                 <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>

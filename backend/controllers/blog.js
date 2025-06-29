@@ -8,6 +8,7 @@ const { smartTrim } = require("../helpers/blog");
 const Tag = require("../models/tag");
 const Category = require("../models/category");
 const _ = require("lodash");
+const User = require("../models/user");
 
 // Create blog
 exports.create = async (req, res) => {
@@ -34,17 +35,29 @@ exports.create = async (req, res) => {
     const arrayOfCategories = parseJSON(fields.categories);
     const arrayOfTags = parseJSON(fields.tags);
 
-    if (!titleValue || typeof titleValue !== "string" || titleValue.trim() === "") {
-      return res.status(400).json({ error: "Title is required and must be a non-empty string" });
+    if (
+      !titleValue ||
+      typeof titleValue !== "string" ||
+      titleValue.trim() === ""
+    ) {
+      return res
+        .status(400)
+        .json({ error: "Title is required and must be a non-empty string" });
     }
 
     const plainTextBody = striptags(bodyContent || "").trim();
     if (!plainTextBody || plainTextBody.length < 200) {
-      return res.status(400).json({ error: "Content is too short. Minimum 200 characters required." });
+      return res
+        .status(400)
+        .json({
+          error: "Content is too short. Minimum 200 characters required.",
+        });
     }
 
     if (!arrayOfCategories?.length) {
-      return res.status(400).json({ error: "At least one category is required" });
+      return res
+        .status(400)
+        .json({ error: "At least one category is required" });
     }
 
     if (!arrayOfTags?.length) {
@@ -64,10 +77,14 @@ exports.create = async (req, res) => {
     });
 
     if (files.photo) {
-      const photoFile = Array.isArray(files.photo) ? files.photo[0] : files.photo;
+      const photoFile = Array.isArray(files.photo)
+        ? files.photo[0]
+        : files.photo;
 
       if (photoFile.size > 1000000) {
-        return res.status(400).json({ error: "Image should be less than 1MB in size" });
+        return res
+          .status(400)
+          .json({ error: "Image should be less than 1MB in size" });
       }
 
       blog.photo.data = fs.readFileSync(photoFile.filepath || photoFile.path);
@@ -90,7 +107,9 @@ exports.list = async (req, res) => {
       .populate("categories", "_id name slug")
       .populate("tags", "_id name slug")
       .populate("postedBy", "_id name userName")
-      .select("_id title slug excerpt categories tags postedBy createdAt updatedAt");
+      .select(
+        "_id title slug excerpt categories tags postedBy createdAt updatedAt"
+      );
 
     res.json(blogs);
   } catch (err) {
@@ -111,7 +130,9 @@ exports.listAllBlogsCategoriesTags = async (req, res) => {
       .sort({ createdAt: -1 })
       .skip(skip)
       .limit(limit)
-      .select("_id title slug excerpt categories tags postedBy createdAt updatedAt");
+      .select(
+        "_id title slug excerpt categories tags postedBy createdAt updatedAt"
+      );
 
     const categories = await Category.find({});
     const tags = await Tag.find({});
@@ -130,7 +151,9 @@ exports.read = async (req, res) => {
       .populate("categories", "_id name slug")
       .populate("tags", "_id name slug")
       .populate("postedBy", "_id name userName")
-      .select("_id title body slug mtitle mdesc categories tags postedBy createdAt updatedAt");
+      .select(
+        "_id title body slug mtitle mdesc categories tags postedBy createdAt updatedAt"
+      );
 
     if (!data) {
       return res.status(400).json({ error: "Blog not found" });
@@ -149,7 +172,9 @@ exports.remove = async (req, res) => {
     const data = await Blog.findOneAndDelete({ slug });
 
     if (!data) {
-      return res.status(400).json({ error: "Blog not found or could not be deleted" });
+      return res
+        .status(400)
+        .json({ error: "Blog not found or could not be deleted" });
     }
 
     res.json({ message: "Blog deleted successfully", deletedBlog: data });
@@ -180,24 +205,40 @@ exports.update = async (req, res) => {
     const bodyContent = normalizeField(fields.body);
 
     const arrayOfCategories = fields.categories
-      ? normalizeField(fields.categories).split(",").map((cat) => cat.trim())
+      ? normalizeField(fields.categories)
+          .split(",")
+          .map((cat) => cat.trim())
       : [];
 
     const arrayOfTags = fields.tags
-      ? normalizeField(fields.tags).split(",").map((tag) => tag.trim())
+      ? normalizeField(fields.tags)
+          .split(",")
+          .map((tag) => tag.trim())
       : [];
 
-    if (!titleValue || typeof titleValue !== "string" || titleValue.trim() === "") {
-      return res.status(400).json({ error: "Title is required and must be a non-empty string" });
+    if (
+      !titleValue ||
+      typeof titleValue !== "string" ||
+      titleValue.trim() === ""
+    ) {
+      return res
+        .status(400)
+        .json({ error: "Title is required and must be a non-empty string" });
     }
 
     const plainTextBody = striptags(bodyContent || "").trim();
     if (!plainTextBody || plainTextBody.length < 200) {
-      return res.status(400).json({ error: "Content is too short. Minimum 200 characters required." });
+      return res
+        .status(400)
+        .json({
+          error: "Content is too short. Minimum 200 characters required.",
+        });
     }
 
     if (!arrayOfCategories.length) {
-      return res.status(400).json({ error: "At least one category is required" });
+      return res
+        .status(400)
+        .json({ error: "At least one category is required" });
     }
 
     if (!arrayOfTags.length) {
@@ -216,13 +257,19 @@ exports.update = async (req, res) => {
     oldBlog.tags = arrayOfTags;
 
     if (files.photo) {
-      const photoFile = Array.isArray(files.photo) ? files.photo[0] : files.photo;
+      const photoFile = Array.isArray(files.photo)
+        ? files.photo[0]
+        : files.photo;
 
       if (photoFile.size > 1000000) {
-        return res.status(400).json({ error: "Image should be less than 1MB in size" });
+        return res
+          .status(400)
+          .json({ error: "Image should be less than 1MB in size" });
       }
 
-      oldBlog.photo.data = fs.readFileSync(photoFile.filepath || photoFile.path);
+      oldBlog.photo.data = fs.readFileSync(
+        photoFile.filepath || photoFile.path
+      );
       oldBlog.photo.contentType = photoFile.mimetype || photoFile.type;
     }
 
@@ -258,22 +305,27 @@ exports.listRelated = async (req, res) => {
   let limit = req.body.limit ? parseInt(req.body.limit) : 3;
   const { _id, categories } = req.body;
 
+  const categoryIds = categories.map((c) => c._id); // 🔥 Fix here
+
   try {
     const blogs = await Blog.find({
       _id: { $ne: _id },
-      categories: { $in: categories },
+      categories: { $in: categoryIds },
     })
       .limit(limit)
       .populate("postedBy", "_id name userName")
       .populate("categories", "name slug")
       .populate("tags", "name slug")
-      .select("title slug excerpt postedBy categories tags createdAt updatedAt");
+      .select(
+        "title slug excerpt postedBy categories tags createdAt updatedAt"
+      );
 
     res.json(blogs);
   } catch (err) {
     res.status(400).json({ error: "Could not fetch related blogs" });
   }
 };
+
 //list search
 exports.listSearch = async (req, res) => {
   const { search } = req.query;
@@ -282,16 +334,32 @@ exports.listSearch = async (req, res) => {
     if (search) {
       const data = await Blog.find({
         $or: [
-          { title: { $regex: search, $options: 'i' } },
-          { body: { $regex: search, $options: 'i' } }
-        ]
+          { title: { $regex: search, $options: "i" } },
+          { body: { $regex: search, $options: "i" } },
+        ],
       });
 
-      return res.json(data).select('-photo -body -createdAt -updatedAt');
+      return res.json(data).select("-photo -body -createdAt -updatedAt");
     } else {
       return res.status(400).json({ error: "Search query is required" });
     }
   } catch (err) {
     return res.status(400).json({ error: errorHandler(err) });
+  }
+};
+
+exports.listByUser = async (req, res) => {
+  try {
+    const user =await  User.findOne({ userName: req.params.username });
+    if (user) {
+      let userId = user._id;
+      const data = await Blog.find({ postedBy: userId })
+        .populate("categories", "_id name slug")
+        .populate("tags", "_id name userName")
+        .select("_id title slug postedBy createdAt updatedAt");
+      res.json(data);
+    }
+  } catch (error) {
+    return res.status(400).json({ error: errorHandler(error) });
   }
 };
