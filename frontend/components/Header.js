@@ -44,7 +44,10 @@ function Header() {
           boxShadow: "0 2px 6px rgba(0, 0, 0, 0.05)",
         }}
       >
-        <Container fluid className="d-flex align-items-center justify-content-between px-4">
+        <Container
+          fluid
+          className="d-flex align-items-center justify-content-between px-4"
+        >
           {/* Left: Brand */}
           <div className="d-flex align-items-center">
             <Link href="/" passHref legacyBehavior>
@@ -61,13 +64,17 @@ function Header() {
             </Link>
           </div>
 
-          {/* Toggler for mobile */}
           <NavbarToggler onClick={toggle} className="d-md-none" />
 
-          {/* Center + Right Nav Links */}
-<Collapse isOpen={isOpen} navbar className="d-md-flex justify-content-end align-items-center">
-
-            <Nav navbar className="d-flex align-items-center flex-column gap-2  flex-md-row">
+          <Collapse
+            isOpen={isOpen}
+            navbar
+            className="d-md-flex justify-content-end align-items-center"
+          >
+            <Nav
+              navbar
+              className="d-flex align-items-center flex-column gap-2  flex-md-row"
+            >
               {!user && (
                 <>
                   <NavItem>
