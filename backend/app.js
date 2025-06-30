@@ -12,7 +12,7 @@ const authRoutes = require("./routes/auth");
 const userRoutes = require("./routes/user");
 const categoryRoutes = require("./routes/category");
 const tagRoutes = require("./routes/tag");
-
+const formRoutes = require("./routes/form");
 const app = express();
 
 mongoose
@@ -28,6 +28,8 @@ app.use(cors({
   methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
   credentials: true, 
 }));
+// Handle favicon requests to prevent 504 timeouts
+app.get("/favicon.ico", (req, res) => res.status(204).end());
 
 
 app.get("/", (req, res) => {
@@ -39,5 +41,6 @@ app.use("/api", authRoutes);
 app.use("/api", userRoutes);
 app.use("/api", categoryRoutes);
 app.use("/api", tagRoutes);
+app.use("/api", formRoutes);
 
 module.exports = app;
