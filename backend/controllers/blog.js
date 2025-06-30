@@ -337,9 +337,9 @@ exports.listSearch = async (req, res) => {
           { title: { $regex: search, $options: "i" } },
           { body: { $regex: search, $options: "i" } },
         ],
-      });
+      }).select("-photo -body -createdAt -updatedAt");
 
-      return res.json(data).select("-photo -body -createdAt -updatedAt");
+      return res.json(data)
     } else {
       return res.status(400).json({ error: "Search query is required" });
     }
@@ -351,14 +351,17 @@ exports.listSearch = async (req, res) => {
 exports.listByUser = async (req, res) => {
   try {
     const user =await  User.findOne({ userName: req.params.username });
-    if (user) {
-      let userId = user._id;
-      const data = await Blog.find({ postedBy: userId })
-        .populate("categories", "_id name slug")
-        .populate("tags", "_id name userName")
-        .select("_id title slug postedBy createdAt updatedAt");
-      res.json(data);
-    }
+   if (user) {
+  let userId = user._id;
+  const data = await Blog.find({ postedBy: userId })
+    .populate("categories", "_id name slug")
+    .populate("tags", "_id name userName")
+    .select("_id title slug postedBy createdAt updatedAt");
+  return res.json(data); // ✅ Add return for consistency
+} else {
+  return res.status(404).json({ error: "User not found" }); // ❗️Add missing case
+}
+
   } catch (error) {
     return res.status(400).json({ error: errorHandler(error) });
   }

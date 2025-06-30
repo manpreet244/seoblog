@@ -1,7 +1,8 @@
 const Category = require("../models/category");
 const slugify = require("slugify");
-const { errorHanlder } = require("../helpers/dbErrorHandler");
+const { errorHandler } = require("../helpers/dbErrorHandler");
 
+// Create category
 exports.create = async (req, res) => {
   try {
     const { name } = req.body;
@@ -15,47 +16,50 @@ exports.create = async (req, res) => {
     const category = new Category({ name, slug });
     const savedCategory = await category.save();
 
-    console.log(savedCategory);
     return res.status(201).json({ savedCategory });
   } catch (error) {
     console.error("Category creation error:", error);
-    return res.status(500).json({ error: errorHanlder(error) });
+    return res.status(500).json({ error: errorHandler(error) });
   }
 };
 
-//list all categories
+// List all categories
 exports.list = async (req, res) => {
   try {
     const data = await Category.find({});
-    res.json(data);
+    return res.json(data);
   } catch (err) {
     console.error("Error fetching categories:", err);
-    return res.status(500).json({ error: errorHanlder(err) });
+    return res.status(500).json({ error: errorHandler(err) });
   }
 };
-//get a single category
+
+// Get a single category
 exports.read = async (req, res) => {
   const slug = req.params.slug.toLowerCase();
   try {
     const category = await Category.findOne({ slug }).exec();
-  return res.json(category); //modify
+    if (!category) {
+      return res.status(404).json({ error: "Category not found" });
+    }
+    return res.json(category);
   } catch (err) {
     console.error("Error fetching category:", err);
-    return res.status(500).json({ error: errorHanlder(err) });
+    return res.status(500).json({ error: errorHandler(err) });
   }
 };
-//delete a category
-exports.remove = (req, res) => {
+
+// Delete a category
+exports.remove = async (req, res) => {
   const slug = req.params.slug.toLowerCase();
   try {
-    const deletedCategory = Category.findOneAndDelete({ slug }).exec();
+    const deletedCategory = await Category.findOneAndDelete({ slug }).exec();
     if (!deletedCategory) {
       return res.status(404).json({ error: "Category not found" });
-    }else{
-      return res.json({ message: "Category deleted successfully" });
     }
+    return res.json({ message: "Category deleted successfully" });
   } catch (err) {
     console.error("Error deleting category:", err);
-    return res.status(500).json({ error: errorHanlder(err) });
+    return res.status(500).json({ error: errorHandler(err) });
   }
 };
