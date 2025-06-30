@@ -1,7 +1,10 @@
+
+
 const User = require("../models/user");
 const shortId = require("shortid");
 const jwt = require("jsonwebtoken");
 const { errorHandler } = require("../helpers/dbErrorHandler");
+const Blog = require('../models/blog')
 
 
 exports.signup = async (req, res) => {
@@ -140,23 +143,24 @@ exports.requireSignin = (req, res, next) => {
 };
 
 
+
 exports.authMiddleware = async (req, res, next) => {
-  const authUserId = req.user._id;
-  const user = await User.findById(authUserId);
-  if (!user) {
-    return res.status(400).json({
-      error: "User not found",
-    });
-  }
   try {
-    req.profile = user;
+    const authUserId = req.user._id;
+
+    const user = await User.findById(authUserId);
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    req.profile = user; 
     next();
   } catch (err) {
-    return res.status(400).json({
-      error: "User not found",
-    });
+    console.error("authMiddleware error:", err);
+    return res.status(500).json({ error: "Authentication middleware failed" });
   }
 };
+
 
 
 exports.adminMiddleware = async (req, res, next) => {

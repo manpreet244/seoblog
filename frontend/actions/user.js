@@ -1,5 +1,6 @@
 import axios from "axios";
 import { API } from "../config";
+import { handleResponse } from './auth';
 
 export const userPublicProfile = (username) => {
   return axios.get(`${API}/user/${username}`, {
@@ -23,7 +24,10 @@ export const update = (token, user) => {
         Authorization: `Bearer ${token}`
             },
     })
-    .then((res) => res.data)
+    .then((res) => {
+      handleResponse(res);
+      return res.data
+    })
     .catch((err) => {
       console.error('Error updating user:', err.response?.data || err.message);
       throw err.response?.data || { error: 'Update failed' };

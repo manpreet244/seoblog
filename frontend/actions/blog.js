@@ -1,7 +1,7 @@
 import axios from "axios";
 import { API } from "../config";
 import queryString from "query-string";
-import { isAuth } from "./auth";
+import { isAuth , handleResponse } from "./auth";
 
 export const createBlog = (blogData, token) => {
   let createBlogEndpoint;
@@ -18,7 +18,10 @@ export const createBlog = (blogData, token) => {
         Authorization: `Bearer ${token}`,
       },
     })
-    .then((res) => res.data)
+    .then((res) =>{
+      handleResponse(res)
+     return res.data
+    })
     .catch((err) => {
       console.error("Create blog error:", err);
       throw err;
@@ -87,13 +90,13 @@ export const list = (username) => {
   let listBlogEndpoint;
 
   if (username) {
-    listBlogEndpoint = `${API}/${username}/blogs`; // ✅ username-based blogs
+    listBlogEndpoint = `${API}/${username}/blogs`;  
   } else {
-    listBlogEndpoint = `${API}/blogs`; // ✅ all blogs
+    listBlogEndpoint = `${API}/blogs`; 
   }
 
   return axios
-    .get(listBlogEndpoint) // ✅ use the correct endpoint
+    .get(listBlogEndpoint) 
     .then((res) => res.data)
     .catch((err) => {
       return { error: err.response ? err.response.data : err.message };
@@ -102,14 +105,23 @@ export const list = (username) => {
 
 
 export const removeBlog = (slug, token) => {
+  let deleteBlogEndpoint ;
+  if (isAuth() && isAuth().role == 1) {
+    deleteBlogEndpoint = `${API}/blog/${slug}`;
+  } else if (isAuth() && isAuth().role == 0) {
+    deleteBlogEndpoint = `${API}/user/blog/${slug}`;
+  }
   return axios
-    .delete(`${API}/blog/${slug}`, {
+    .delete(`${deleteBlogEndpoint}`, {
       headers: {
         Accept: "application/json",
         Authorization: `Bearer ${token}`,
       },
     })
-    .then((res) => res.data)
+     .then((res) =>{
+      handleResponse(res)
+     return  res.data
+    })
     .catch((err) => {
       console.error("Delete blog error:", err);
       return { error: err.response?.data?.error || "Delete failed" };

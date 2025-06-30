@@ -1,6 +1,7 @@
 // actions/category.js
 import axios from 'axios';
 import { API } from "../config";
+import { handleResponse } from './auth';
 // {name: 'mummy category'}
 export const createCategory = async (category, token) => {
   console.log("token " + token, category);
@@ -15,6 +16,7 @@ export const createCategory = async (category, token) => {
         }
       }
     );
+    handleResponse(response)
     return response.data;
   } catch (error) {
     return { error: error.response?.data?.error || 'Something went wrong' };
@@ -55,11 +57,13 @@ export const removeCategory = async (slug, token) => {
       `${API}/category/${slug}`, 
       {
         headers: {
+          
           Authorization: `Bearer ${token}`,
           'Content-Type': 'application/json'
         }
       }
     );
+     handleResponse(response)
     return response.data;
   } catch (error) {
     return { error: error.response?.data?.error || 'Something went wrong' };

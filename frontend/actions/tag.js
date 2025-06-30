@@ -1,7 +1,7 @@
 // actions/tag.js
 import axios from 'axios';
 import { API } from "../config";
-
+import { handleResponse } from './auth';
 // actions/tag.js
 export const createTag = async (name, token) => {
     console.log(name )
@@ -16,6 +16,7 @@ export const createTag = async (name, token) => {
         }
       }
     );
+     handleResponse(response)
     return response.data;
   } catch (error) {
     console.error('createTag error:', error.response?.data || error.message);
@@ -59,6 +60,7 @@ export const removeTag = async (slug, token) => {
         }
       }
     );
+     handleResponse(response)
     return response.data;
   } catch (error) {
     return { error: error.response?.data?.error || 'Something went wrong' };

@@ -6,12 +6,13 @@ import { API, DOMAIN, APP_NAME } from "../../config";
 import parse from "html-react-parser";
 import { useEffect, useState } from "react";
 import SmallCard from "../../components/blog/SmallCard";
+import DisqusThread from '../../components/DisqusThread'
+
 import { useRouter } from "next/router";
 
 const SingleBlog = () => {
   const router = useRouter();
   const { slug } = router.query;
-
   const [blog, setBlog] = useState(null);
   const [related, setRelated] = useState([]);
 
@@ -89,6 +90,17 @@ const SingleBlog = () => {
     );
   };
 
+  const showComments = () => {
+    return (
+      <div>
+        <DisqusThread id={blog.id}
+        title={blog.title}
+        path={`/blog/${slug}`}
+        />
+      </div>
+    )
+  }
+
   if (!blog) return null;
 
   return (
@@ -133,7 +145,7 @@ const SingleBlog = () => {
 
               <div className="px-4 pb-4">
                 <h4>Comments</h4>
-                <p>Show Comments</p>
+                {showComments()}
               </div>
             </div>
           </div>
