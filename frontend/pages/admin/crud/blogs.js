@@ -2,6 +2,7 @@ import Link from "next/link";
 import Admin from "../../../components/auth/Admin";
 import Layout from "../../../components/Layout";
 import {BlogRead} from "../../../components/crud/BlogRead";
+
 const Blog = () => {
   return (
     <Layout>

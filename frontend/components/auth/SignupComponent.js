@@ -25,6 +25,7 @@ const SignupComponent = () => {
 
     try {
       const data = await signup({ name, email, password });
+
       setValues({
         ...values,
         name: "",
@@ -34,6 +35,9 @@ const SignupComponent = () => {
         message: data.message || "Signup successful",
         showForm: false,
       });
+
+      // Redirect to signin after short delay
+      setTimeout(() => Router.push("/signin"), 1500);
     } catch (err) {
       setValues({
         ...values,
@@ -69,7 +73,7 @@ const SignupComponent = () => {
     );
 
   const signupForm = () => (
-    <div className="d-flex justify-content-center " style={{ marginTop:"50px" ,inHeight: "100vh" }}>
+    <div className="d-flex justify-content-center" style={{ marginTop: "50px", minHeight: "100vh" }}>
       <div
         className="card p-4 shadow-sm"
         style={{
@@ -77,10 +81,12 @@ const SignupComponent = () => {
           width: "100%",
           borderRadius: "16px",
           border: "1px solid #ddd",
-          backgroundColor: "#fff"
+          backgroundColor: "#fff",
         }}
       >
-        <h3 className="text-center mb-1" style={{ color: "#c634eb", fontWeight: 700 }}>Sign up</h3>
+        <h3 className="text-center mb-1" style={{ color: "#c634eb", fontWeight: 700 }}>
+          Sign up
+        </h3>
         <p className="text-center text-muted mb-4">Sign up to continue</p>
         <form onSubmit={handleSubmit}>
           <div className="form-floating mb-3">
@@ -126,13 +132,17 @@ const SignupComponent = () => {
               backgroundColor: "#c634eb",
               borderColor: "#c634eb",
               color: "#fff",
-              fontWeight: "500"
+              fontWeight: "500",
             }}
             disabled={loading}
           >
             {loading ? (
               <>
-                <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                <span
+                  className="spinner-border spinner-border-sm me-2"
+                  role="status"
+                  aria-hidden="true"
+                ></span>
                 Signing up...
               </>
             ) : (

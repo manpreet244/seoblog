@@ -5,6 +5,8 @@ const shortId = require("shortid");
 const jwt = require("jsonwebtoken");
 const { errorHandler } = require("../helpers/dbErrorHandler");
 const Blog = require('../models/blog')
+const sgMail = require('@sendgrid/mail'); // SENDGRID_API_KEY
+sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
 
 exports.signup = async (req, res) => {
@@ -162,6 +164,39 @@ exports.authMiddleware = async (req, res, next) => {
 };
 
 
+// helpers
+const issueToken = (user) =>
+  jwt.sign({ _id: user._id, role: user.role }, process.env.JWT_SECRET, {
+    expiresIn: "1d",
+  });
+
+const loginWithRole = async (req, res, requiredRole) => {
+  const { email, password } = req.body;
+
+  try {
+    const user = await User.findOne({ email }).exec();
+    if (!user)
+      return res
+        .status(400)
+        .json({ error: "User with that email does not exist. Please sign up." });
+
+    if (!user.authenticate(password))
+      return res.status(400).json({ error: "Email and password do not match." });
+
+    if (user.role !== requiredRole)
+      return res.status(403).json({ error: "Access denied for this portal." });
+
+    const token = issueToken(user);
+    res.cookie("token", token, { httpOnly: true, maxAge: 86400000 });
+    return res.json({ token, user });
+  } catch (err) {
+    return res.status(500).json({ error: "Something went wrong." });
+  }
+};
+
+// exports
+exports.signinUser  = (req, res) => loginWithRole(req, res, 0);
+exports.signinAdmin = (req, res) => loginWithRole(req, res, 1);
 
 exports.adminMiddleware = async (req, res, next) => {
   try {
@@ -201,3 +236,140 @@ exports.canUpdateDeleteBlog = async (req , res , next) =>{
     return res.status(500).json({ error: errorHandler});
   }
 }
+
+
+exports.forgotPassword = async (req, res) => {
+  const { email } = req.body;
+
+  try {
+    const user = await User.findOne({ email });
+
+    if (!user) {
+      return res.status(400).json({ error: "User with that email does not exist." });
+    }
+
+    const token = jwt.sign(
+      { _id: user._id },
+      process.env.JWT_RESET_KEY,
+      { expiresIn: "10m" }
+    );
+
+    // Debug URL generation
+    const resetURL = `${process.env.CLIENT_URL}/auth/password/reset/${token}`;
+    console.log('=== URL Debug ===');
+    console.log('CLIENT_URL:', process.env.CLIENT_URL);
+    console.log('Token:', token);
+    console.log('Complete Reset URL:', resetURL);
+    console.log('================');
+
+    // Prepare email
+    const emailData = {
+      to: email,
+      from: process.env.EMAIL_FROM,
+      subject: `Password Reset Link`,
+      html: `
+        <h4>Please use the following link to reset your password</h4>
+        <p>Click <a href="${resetURL}">here</a> to reset your password.</p>
+        <p>Or copy and paste this link into your browser:</p>
+        <p><a href="${resetURL}">${resetURL}</a></p>
+        <hr />
+        <p>This email may contain sensitive information</p>
+        <p>This link will expire in 10 minutes.</p>
+        <p>https://seoblog.com</p>
+      `,
+    };
+
+    // Update the user's resetPasswordLink
+    user.resetPasswordLink = token;
+    await user.save();
+
+    // Send email
+    try {
+      console.log('=== SendGrid Debug ===');
+      console.log('API Key exists:', !!process.env.SENDGRID_API_KEY);
+      console.log('API Key first 10 chars:', process.env.SENDGRID_API_KEY?.substring(0, 10));
+      console.log('Email From:', process.env.EMAIL_FROM);
+      console.log('Email To:', email);
+      console.log('=====================');
+      
+      await sgMail.send(emailData);
+      console.log('✅ Email sent successfully');
+    } catch (sgError) {
+      console.error('❌ SendGrid Error Details:');
+      console.error('Status Code:', sgError.code);
+      console.error('Message:', sgError.message);
+      console.error('Response Body:', sgError.response?.body);
+      throw sgError; // Re-throw to be caught by outer catch
+    }
+
+    return res.json({
+      message: `Email has been sent to ${email}. Follow the instructions to reset your password.`,
+    });
+
+  } catch (error) {
+    console.error('Error in forgotPassword:', error);
+    return res.status(500).json({ error: error.message || 'Something went wrong' });
+  }
+};
+
+
+exports.resetPassword = async (req, res) => {
+  const { newPassword, resetPasswordLink } = req.body;
+
+  console.log('=== Reset Password Request ===');
+  console.log('Request body:', req.body);
+  console.log('newPassword:', newPassword);
+  console.log('resetPasswordLink length:', resetPasswordLink?.length);
+  console.log('================================');
+
+  try {
+    // Check required fields first
+    if (!newPassword || !resetPasswordLink) {
+      console.log('❌ Missing required fields');
+      return res.status(400).json({ error: "All fields are required." });
+    }
+
+    // Verify JWT token
+    let decoded;
+    try {
+      decoded = jwt.verify(resetPasswordLink, process.env.JWT_RESET_KEY);
+      console.log('✅ JWT verified successfully:', decoded);
+    } catch (jwtError) {
+      console.log('❌ JWT verification failed:', jwtError.message);
+      return res.status(400).json({ error: "Invalid or expired reset link." });
+    }
+
+    // Find user with the reset link
+    console.log('🔍 Looking for user with resetPasswordLink...');
+    const user = await User.findOne({ resetPasswordLink });
+
+    if (!user) {
+      console.log('❌ No user found with this reset link');
+      return res.status(400).json({ error: "Invalid reset link. Please request a new one." });
+    }
+
+    // Update password and clear reset link
+    console.log('=== Reset Password Debug ===');
+    console.log('User found:', !!user);
+    console.log('User email:', user.email);
+    console.log('New password length:', newPassword.length);
+    console.log('Current hashed_password:', user.hashed_password?.substring(0, 10));
+    
+    user.password = newPassword;  // This should trigger your password hashing
+    console.log('After setting password, hashed_password:', user.hashed_password?.substring(0, 10));
+    
+    user.resetPasswordLink = "";
+  
+    await user.save();
+    console.log('✅ User saved successfully');
+    console.log('===============================');
+
+    return res.json({
+      message: "Great! Now you can login with your new password.",
+    });
+
+  } catch (error) {
+    console.error('Error in resetPassword:', error);
+    return res.status(500).json({ error: error.message || 'Something went wrong' });
+  }
+};

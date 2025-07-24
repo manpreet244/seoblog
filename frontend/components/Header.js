@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import { APP_NAME } from "../config";
 import Link from "next/link";
 import Router from "next/router";
 import {
@@ -15,18 +14,20 @@ import { signout, isAuth } from "../actions/auth";
 import Search from "./blog/Search";
 
 function Header() {
-  const [user, setUser] = useState(null);
   const [isOpen, setIsOpen] = useState(false);
+  const [auth, setAuth] = useState(null);
+  const [mounted, setMounted] = useState(false);
+  
+  const toggle = () => setIsOpen(!isOpen);
 
   useEffect(() => {
-    setUser(isAuth());
+    setMounted(true);
+    setAuth(isAuth());
   }, []);
-
-  const toggle = () => setIsOpen(!isOpen);
 
   const handleSignout = () => {
     signout(() => {
-      setUser(null);
+      setAuth(null);
       Router.push("/");
       setIsOpen(false);
     });
@@ -48,7 +49,6 @@ function Header() {
           fluid
           className="d-flex align-items-center justify-content-between px-4"
         >
-          {/* Left: Brand */}
           <div className="d-flex align-items-center">
             <Link href="/" passHref legacyBehavior>
               <NavLink
@@ -59,7 +59,7 @@ function Header() {
                   textDecoration: "none",
                 }}
               >
-                {APP_NAME}
+                Blog App
               </NavLink>
             </Link>
           </div>
@@ -73,9 +73,9 @@ function Header() {
           >
             <Nav
               navbar
-              className="d-flex align-items-center flex-column gap-2  flex-md-row"
+              className="d-flex align-items-center flex-column gap-2 flex-md-row"
             >
-              {!user && (
+              {mounted && !auth && (
                 <>
                   <NavItem>
                     <Link href="/signup" passHref legacyBehavior>
@@ -91,6 +91,22 @@ function Header() {
                       </NavLink>
                     </Link>
                   </NavItem>
+
+                  <NavItem>
+                    <Link href="/admin/signin" passHref legacyBehavior>
+                      <NavLink
+                        style={{
+                          fontWeight: "500",
+                          color: "#312a33",
+                          textDecoration: "none",
+                        }}
+                        onClick={() => setIsOpen(false)}
+                      >
+                        Admin sign in
+                      </NavLink>
+                    </Link>
+                  </NavItem>
+
                   <NavItem>
                     <Link href="/signin" passHref legacyBehavior>
                       <NavLink
@@ -108,7 +124,7 @@ function Header() {
                 </>
               )}
 
-              {user?.role === 0 && (
+              {mounted && auth?.role === 0 && (
                 <NavItem>
                   <Link href="/user" passHref legacyBehavior>
                     <NavLink
@@ -119,13 +135,13 @@ function Header() {
                       }}
                       onClick={() => setIsOpen(false)}
                     >
-                      {`${user.name}'s Dashboard`}
+                      {`${auth.name}'s Dashboard`}
                     </NavLink>
                   </Link>
                 </NavItem>
               )}
 
-              {user?.role === 1 && (
+              {mounted && auth?.role === 1 && (
                 <NavItem>
                   <Link href="/admin" passHref legacyBehavior>
                     <NavLink
@@ -136,7 +152,7 @@ function Header() {
                       }}
                       onClick={() => setIsOpen(false)}
                     >
-                      {`${user.name}'s Dashboard`}
+                      {`${auth.name}'s Dashboard`}
                     </NavLink>
                   </Link>
                 </NavItem>
@@ -175,7 +191,7 @@ function Header() {
                 </Link>
               </NavItem>
 
-              {user && (
+              {mounted && auth && (
                 <NavItem>
                   <NavLink
                     onClick={handleSignout}

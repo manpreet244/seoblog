@@ -35,6 +35,35 @@ export const signup = async (user) => {
     throw err;
   }
 };
+export const signinUser = async (user) => {
+  try {
+    const response = await axios.post(`${API}/signin`, user, {
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+    });
+    return response.data;
+  } catch (err) {
+    console.error(err);
+    throw err;
+  }
+};
+
+export const signinAdmin = async (user) => {
+  try {
+    const response = await axios.post(`${API}/admin/signin`, user, {
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+    });
+    return response.data;
+  } catch (err) {
+    console.error(err);
+    throw err;
+  }
+};
 
 export const signout = async (next) => {
   try {
@@ -129,4 +158,36 @@ export const isAuth = () => {
   }
 
   return false;
+};
+
+// Forgot password
+export const forgotPassword = async (email) => {
+  try {
+    const response = await axios.put(`${API}/forgot-password`, { email }, {
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+    });
+    return response.data;
+  } catch (err) {
+    console.error("Forgot password error:", err);
+    throw err;
+  }
+};
+
+// Reset password
+export const resetPassword = async (resetData) => {
+  try {
+    const response = await axios.put(`${API}/reset-password`, resetData, {
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+    });
+    return response.data;
+  } catch (err) {
+    console.error("Reset password error:", err);
+    throw err;
+  }
 };

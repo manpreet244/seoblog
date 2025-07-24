@@ -1,11 +1,12 @@
 import { useState } from "react";
 import { signin, authenticate, isAuth } from "../../actions/auth";
 import Router from "next/router";
+import Link from "next/link";
 
 const SigninComponent = () => {
   const [values, setValues] = useState({
-    email: "miss@gmail.com",
-    password: "missuuu",
+    email: "",
+    password: "",
     error: "",
     loading: false,
     message: "",
@@ -121,6 +122,11 @@ const SigninComponent = () => {
             )}
           </button>
         </form>
+        <div className="text-center mt-3">
+          <Link href="/auth/password/forgot" className="text-decoration-none" style={{ color: "#c634eb" }}>
+            Forgot your password?
+          </Link>
+        </div>
       </div>
     </div>
   );
