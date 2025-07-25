@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import parse from 'html-react-parser';
 import Layout from "../components/Layout";
 import { listBlogsWithCategoriesAndTags } from "../actions/blog";
 import { API } from "../config";
@@ -27,9 +28,9 @@ const Index = () => {
 
   const showBlogExcerpt = (blog) => {
     if (blog.excerpt && blog.excerpt.length > 150) {
-      return blog.excerpt.substring(0, 150) + "...";
+      return parse(blog.excerpt.substring(0, 150) + "...");
     }
-    return blog.excerpt || "Discover amazing insights and stories...";
+    return parse(blog.excerpt || "Discover amazing insights and stories...");
   };
 
   return (
