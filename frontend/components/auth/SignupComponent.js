@@ -73,23 +73,22 @@ const SignupComponent = () => {
     );
 
   const signupForm = () => (
-    <div className="d-flex justify-content-center" style={{ marginTop: "50px", minHeight: "100vh" }}>
+    <div className="d-flex justify-content-center align-items-center" style={{ minHeight: "80vh" }}>
       <div
-        className="card p-4 shadow-sm"
+        className="card p-3 shadow-lg border-0"
         style={{
-          maxWidth: "420px",
+          maxWidth: "350px",
           width: "100%",
-          borderRadius: "16px",
-          border: "1px solid #ddd",
-          backgroundColor: "#fff",
+          borderRadius: "12px",
+          boxShadow: "0 2px 16px rgba(198,52,235,0.08)",
+          background: "#fff",
         }}
       >
-        <h3 className="text-center mb-1" style={{ color: "#c634eb", fontWeight: 700 }}>
+        <h3 className="text-center mb-2" style={{ color: "#c634eb", fontWeight: 700, fontSize: "2rem" }}>
           Sign up
         </h3>
-        <p className="text-center text-muted mb-4">Sign up to continue</p>
         <form onSubmit={handleSubmit}>
-          <div className="form-floating mb-3">
+          <div className="form-floating mb-2">
             <input
               type="text"
               className="form-control"
@@ -98,10 +97,11 @@ const SignupComponent = () => {
               value={name}
               onChange={handleChange("name")}
               required
+              style={{ fontSize: "1rem", borderRadius: "8px" }}
             />
             <label htmlFor="name">Name</label>
           </div>
-          <div className="form-floating mb-3">
+          <div className="form-floating mb-2">
             <input
               type="email"
               className="form-control"
@@ -110,10 +110,11 @@ const SignupComponent = () => {
               value={email}
               onChange={handleChange("email")}
               required
+              style={{ fontSize: "1rem", borderRadius: "8px" }}
             />
             <label htmlFor="email">Email</label>
           </div>
-          <div className="form-floating mb-4">
+          <div className="form-floating mb-3">
             <input
               type="password"
               className="form-control"
@@ -122,6 +123,7 @@ const SignupComponent = () => {
               value={password}
               onChange={handleChange("password")}
               required
+              style={{ fontSize: "1rem", borderRadius: "8px" }}
             />
             <label htmlFor="password">Password</label>
           </div>
@@ -133,6 +135,9 @@ const SignupComponent = () => {
               borderColor: "#c634eb",
               color: "#fff",
               fontWeight: "500",
+              borderRadius: "8px",
+              fontSize: "1.1rem",
+              padding: "8px 0"
             }}
             disabled={loading}
           >

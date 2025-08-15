@@ -4,6 +4,7 @@ import Head from "next/head";
 import Link from "next/link";
 import { API, DOMAIN, APP_NAME, FB_APP_ID } from "../../config";
 import moment from "moment";
+import ContactForm from "../../components/form/ContactForm";
 
 const UserProfile = ({ user, blogs }) => {
   const showUserBlogs = () => {
@@ -45,9 +46,7 @@ const UserProfile = ({ user, blogs }) => {
               <div className="card">
                 <div className="card-body">
                   <h5>{user.name}</h5>
-                  <Link href={user.profile} legacyBehavior>
-                    <a>View Profile</a>
-                  </Link>
+                  <p className="text-muted">@{user.userName}</p>
                   <p>Joined {moment(user.createdAt).fromNow()}</p>
                 </div>
               </div>
@@ -65,9 +64,13 @@ const UserProfile = ({ user, blogs }) => {
                   <h5 className="bg-primary pt-4 p-4 text-white pb-4">
                     Recent blogs by {user.name}
                   </h5>
-                  <br />
-                  {showUserBlogs()}
-                  <p>Contact Form</p>
+                  {blogs && blogs.length > 0 ? (
+                    showUserBlogs()
+                  ) : (
+                    <div className="p-4">
+                      <p>No blogs yet.</p>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
@@ -78,8 +81,9 @@ const UserProfile = ({ user, blogs }) => {
                   <h5 className="bg-primary pt-4 pb-4 p-4 text-white">
                     Message {user.name}
                   </h5>
-                  <br />
-                  <p>Contact Form</p>
+                  <div className="p-4">
+                    <ContactForm authorEmail={user.email} />
+                  </div>
                 </div>
               </div>
             </div>

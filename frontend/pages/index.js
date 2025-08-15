@@ -180,7 +180,7 @@ const Index = () => {
                     >
                       {blog.photo && (
                         <img
-                          src={`${API || 'http://localhost:8000'}/api/blog/photo/${blog.slug}`}
+                          src={`${API}/api/blog/photo/${blog.slug}`}
                           alt={blog.title}
                           className="card-img-top"
                           style={{ height: "200px", objectFit: "cover" }}

@@ -18,7 +18,8 @@ exports.signup = async (req, res) => {
 
     const { name, email, password } = req.body;
     let userName = shortId.generate();
-    let profile = `${process.env.CLIENT_URL}/profile/${userName}`;
+    // Use relative path instead of absolute URL to avoid localhost issues
+    let profile = `/profile/${userName}`;
 
     let newUser = new User({ name, email, password, userName, profile });
     await newUser.save();

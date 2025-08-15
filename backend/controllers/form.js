@@ -36,31 +36,36 @@ exports.contactForm = (req, res) => {
 
 };
 
-// exports.contactBlogAuthorForm = (req, res) => {
-//     const { authorEmail, email, name, message } = req.body;
-//     // console.log(req.body);
+exports.contactBlogAuthorForm = (req, res) => {
+    const { authorEmail, email, name, message } = req.body;
 
-//     let maillist = [authorEmail, process.env.EMAIL_TO];
+    let maillist = [authorEmail, process.env.EMAIL_TO];
 
-//     const emailData = {
-//         to: maillist,
-//         from: email,
-//         subject: `Someone messaged you from ${process.env.APP_NAME}`,
-//         text: `Email received from contact from \n Sender name: ${name} \n Sender email: ${email} \n Sender message: ${message}`,
-//         html: `
-//             <h4>Message received from:</h4>
-//             <p>name: ${name}</p>
-//             <p>Email: ${email}</p>
-//             <p>Message: ${message}</p>
-//             <hr />
-//             <p>This email may contain sensetive information</p>
-//             <p>https://onemancode.com</p>
-//         `
-//     };
+    const emailData = {
+        to: maillist,
+        from: process.env.EMAIL_FROM,
+        subject: `Someone messaged you from ${process.env.APP_NAME}`,
+        text: `Email received from contact form \n Sender name: ${name} \n Sender email: ${email} \n Sender message: ${message}`,
+        html: `
+            <h4>Message received from:</h4>
+            <p>Name: ${name}</p>
+            <p>Email: ${email}</p>
+            <p>Message: ${message}</p>
+            <hr />
+            <p>This email may contain sensitive information</p>
+            <p>${process.env.CLIENT_URL}</p>
+        `
+    };
 
-//     sgMail.send(emailData).then(sent => {
-//         return res.json({
-//             success: true
-//         });
-//     });
-// };
+    sgMail
+        .send(emailData)
+        .then(sent => {
+            return res.json({
+                success: true
+            });
+        })
+        .catch((err) => {
+            console.error('SendGrid Error:', JSON.stringify(err.response?.body || err.message, null, 2));
+            return res.status(500).json({ success: false, error: 'Email could not be sent.' });
+        });
+};
